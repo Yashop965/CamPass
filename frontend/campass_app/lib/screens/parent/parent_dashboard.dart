@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui';
@@ -25,17 +26,62 @@ class ParentDashboard extends StatefulWidget {
   State<ParentDashboard> createState() => _ParentDashboardState();
 }
 
-class _ParentDashboardState extends State<ParentDashboard> with TickerProviderStateMixin {
+class _ParentDashboardState extends State<ParentDashboard> with TickerProviderStateMixin, WidgetsBindingObserver {
   int _selectedIndex = 0;
   String? _selectedChildId;
+  Timer? _pollTimer;
   
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    
+    // Initial Load
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      try {
+      _refreshData();
+      _loadChildren();
+    });
+
+    // Start Polling (every 15 seconds)
+    _pollTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
+      if (mounted) {
+        _refreshData();
+      }
+    });
+
+    // Subscribe to parent alerts and listen for messages
+    _setupNotifications();
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      print("App resumed - refreshing parent dashboard");
+      _refreshData();
+    }
+  }
+
+  void _refreshData() {
+     try {
         final parentProvider = Provider.of<ParentProvider>(context, listen: false);
         parentProvider.loadPendingApprovals(widget.token);
+        // We could also reload children if linking status changed externally
+        // parentProvider.loadChildren(widget.token); 
+     } catch (e) {
+        print("Error refreshing parent data: $e");
+     }
+  }
+
+  void _loadChildren() {
+      try {
+        final parentProvider = Provider.of<ParentProvider>(context, listen: false);
         parentProvider.loadChildren(widget.token).then((_) {
             // If children exist, load passes for the first one by default
             if (parentProvider.children.isNotEmpty) {
@@ -43,13 +89,8 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
             }
         });
       } catch (e) {
-        print("CRITICAL ERROR: ParentProvider not found in context: $e");
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Provider Error: $e")));
+         print("Error loading children: $e");
       }
-    });
-
-    // Subscribe to parent alerts and listen for messages
-    _setupNotifications();
   }
 
   void _setupNotifications() {
@@ -65,15 +106,10 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
                SnackBar(
                  content: Text("New Pass Request: ${message.notification?.body ?? ''}"),
                  backgroundColor: AppTheme.primary,
-                 action: SnackBarAction(label: 'REFRESH', onPressed: () {
-                    final parentProvider = Provider.of<ParentProvider>(context, listen: false);
-                    parentProvider.loadPendingApprovals(widget.token);
-                 }),
+                 action: SnackBarAction(label: 'REFRESH', onPressed: () => _refreshData()),
                ),
              );
-             // Auto-refresh
-             final parentProvider = Provider.of<ParentProvider>(context, listen: false);
-             parentProvider.loadPendingApprovals(widget.token);
+             _refreshData();
            }
          } else if (message.data['type'] == 'sos_alert') {
             if (mounted) {
@@ -150,10 +186,8 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
                    ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Success! Student linked."), backgroundColor: AppTheme.success),
                    );
-                   // Refresh data
-                   final parentProvider = Provider.of<ParentProvider>(context, listen: false);
-                   parentProvider.loadPendingApprovals(widget.token);
-                   parentProvider.loadChildren(widget.token); // Also refresh children list
+                   _refreshData();
+                   _loadChildren();
                 }
               } catch (e) {
                 if (mounted) {
@@ -237,7 +271,7 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
                          index: _selectedIndex,
                          children: [
                             _buildApprovalsTab(),
-                            _buildReviewTab(), // Placeholder for now
+                            _buildReviewTab(), 
                             Consumer<ParentProvider>(
                                 builder: (context, provider, _) { 
                                    String targetChildId = "";
@@ -384,7 +418,6 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
                     onRefresh: () async {
                       // Refresh currently selected child's passes
                       // We can infer current child from the list or default to first
-                      // For simplicity, just reload for the first child if list is empty, or the child of the first pass
                       String targetId = children.first['id'];
                       if (history.isNotEmpty) targetId = history.first.userId;
                       await parentProvider.loadChildPasses(targetId, widget.token);
@@ -457,33 +490,38 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
   Widget _buildApprovalsTab() {
     return Consumer<ParentProvider>(
       builder: (context, parentProvider, _) {
-        if (parentProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
-        }
-
         final pending = parentProvider.pendingApprovals;
 
         if (pending.isEmpty) {
-          return Center(
-             child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   Icon(Icons.check_circle_outline, size: 80, color: AppTheme.success.withOpacity(0.5)),
-                   const SizedBox(height: 16),
-                   const Text("All Caught Up!", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                   const SizedBox(height: 8),
-                   const Text("No pending approval requests.", style: TextStyle(color: AppTheme.textGrey)),
-                ],
-             ),
+          // Even if empty, wrap in RefreshIndicator so user can pull to refresh manually
+          return RefreshIndicator(
+            color: AppTheme.primary,
+            backgroundColor: AppTheme.surface,
+            onRefresh: () async => _refreshData(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.6,
+                alignment: Alignment.center,
+                child: Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                      Icon(Icons.check_circle_outline, size: 80, color: AppTheme.success.withOpacity(0.5)),
+                      const SizedBox(height: 16),
+                      const Text("All Caught Up!", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      const Text("No pending approval requests.", style: TextStyle(color: AppTheme.textGrey)),
+                   ],
+                ),
+              ),
+            ),
           );
         }
 
         return RefreshIndicator(
           color: AppTheme.primary,
           backgroundColor: AppTheme.surface,
-          onRefresh: () async {
-            await parentProvider.loadPendingApprovals(widget.token);
-          },
+          onRefresh: () async => _refreshData(),
           child: ListView.builder(
             padding: const EdgeInsets.all(24),
             itemCount: pending.length,
@@ -503,7 +541,7 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
                                 isWarden: false,
                              )
                          )
-                      );
+                      ).then((_) => _refreshData());
                    },
                    child: Row(
                       children: [

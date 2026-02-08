@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui';
@@ -24,19 +25,58 @@ class WardenDashboard extends StatefulWidget {
   State<WardenDashboard> createState() => _WardenDashboardState();
 }
 
-class _WardenDashboardState extends State<WardenDashboard> {
+class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   String? _wardenId;
   String? _token;
+  Timer? _pollTimer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    
     _wardenId = widget.wardenId.isNotEmpty ? widget.wardenId : null;
     _token = widget.token.isNotEmpty ? widget.token : null;
     
     _loadData();
     _setupNotifications();
+
+    // Start Polling (every 15 seconds)
+    _pollTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
+      if (mounted && _token != null) {
+        _refreshData();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+       print("App resumed - refreshing warden dashboard");
+       if (_token != null) {
+          _refreshData();
+       }
+    }
+  }
+
+  void _refreshData() {
+      if (!mounted || _token == null) return;
+      try {
+        final wardenProvider = Provider.of<WardenProvider>(context, listen: false);
+        wardenProvider.loadPendingApprovals(_token!);
+        wardenProvider.loadAllSOSAlerts(_token!);
+        wardenProvider.loadGeofenceViolations(_token!);
+      } catch (e) {
+         print("Error refreshing warden data: $e");
+      }
   }
 
   void _setupNotifications() {
@@ -50,33 +90,28 @@ class _WardenDashboardState extends State<WardenDashboard> {
          
          if (mounted) {
             final type = message.data['type'];
-            final wardenProvider = Provider.of<WardenProvider>(context, listen: false);
             bool shouldRefresh = false;
             String snackBarMsg = "";
 
             if (type == 'pass_request') {
-               wardenProvider.loadPendingApprovals(_token!);
                snackBarMsg = "New Pass Request: ${message.notification?.body ?? ''}";
                shouldRefresh = true;
             } else if (type == 'sos_alert' || type == 'manual_sos') {
-               wardenProvider.loadAllSOSAlerts(_token!);
                snackBarMsg = "SOS ALERT! ${message.notification?.body ?? ''}";
                shouldRefresh = true;
             } else if (type == 'geofence_violation') {
-               wardenProvider.loadGeofenceViolations(_token!);
                snackBarMsg = "Violation Detected: ${message.notification?.body ?? ''}";
                shouldRefresh = true;
             }
 
             if (shouldRefresh) {
+               _refreshData();
                ScaffoldMessenger.of(context).showSnackBar(
                  SnackBar(
                    content: Text(snackBarMsg),
                    backgroundColor: type == 'pass_request' ? AppTheme.primary : AppTheme.accent,
                    duration: const Duration(seconds: 4),
-                   action: SnackBarAction(label: 'VIEW', onPressed: () {
-                      // Logic to switch tab could go here if needed
-                   }),
+                   action: SnackBarAction(label: 'REFRESH', onPressed: () => _refreshData()),
                  ),
                );
             }
@@ -100,11 +135,9 @@ class _WardenDashboardState extends State<WardenDashboard> {
     }
     
     if (mounted && _token != null) {
+      _refreshData();
       final wardenProvider = Provider.of<WardenProvider>(context, listen: false);
-      wardenProvider.loadPendingApprovals(_token!);
       wardenProvider.loadHistory(_token!);
-      wardenProvider.loadAllSOSAlerts(_token!);
-      wardenProvider.loadGeofenceViolations(_token!);
     }
   }
 
@@ -216,42 +249,48 @@ class _WardenDashboardState extends State<WardenDashboard> {
     return Consumer<WardenProvider>(
       builder: (context, provider, _) {
          final stats = provider.getDashboardStats();
-         return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                  Row(
-                     children: [
-                        Expanded(child: _buildStatCard("PENDING", stats['pendingApprovals'].toString(), AppTheme.primary, Icons.timer)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildStatCard("ACTIVE SOS", stats['activeSOSAlerts'].toString(), AppTheme.accent, Icons.warning)),
-                     ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                     children: [
-                        Expanded(child: _buildStatCard("VIOLATIONS", stats['geofenceViolations'].toString(), Colors.orange, Icons.not_listed_location)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildStatCard("ON CAMPUS", "1.2k", AppTheme.success, Icons.people)), // Mock data for demo
-                     ],
-                  ),
-                  
-                  const SizedBox(height: 32),
-                  const Text("SYSTEM STATUS", style: TextStyle(color: AppTheme.textGrey, letterSpacing: 2, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  GlassyCard(
-                     child: Column(
+         return RefreshIndicator(
+            onRefresh: () async => _refreshData(),
+            color: AppTheme.primary,
+            backgroundColor: AppTheme.surface,
+            child: SingleChildScrollView(
+               physics: const AlwaysScrollableScrollPhysics(),
+               padding: const EdgeInsets.all(24),
+               child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                     Row(
                         children: [
-                           _buildSystemRow("Gate Sensors", "Online", AppTheme.success),
-                           const Divider(color: Colors.white12),
-                           _buildSystemRow("Database Sync", "Active", AppTheme.success),
-                           const Divider(color: Colors.white12),
-                           _buildSystemRow("Notifications Service", "Running", AppTheme.success),
+                           Expanded(child: _buildStatCard("PENDING", stats['pendingApprovals'].toString(), AppTheme.primary, Icons.timer)),
+                           const SizedBox(width: 16),
+                           Expanded(child: _buildStatCard("ACTIVE SOS", stats['activeSOSAlerts'].toString(), AppTheme.accent, Icons.warning)),
                         ],
                      ),
-                  )
-               ],
+                     const SizedBox(height: 16),
+                     Row(
+                        children: [
+                           Expanded(child: _buildStatCard("VIOLATIONS", stats['geofenceViolations'].toString(), Colors.orange, Icons.not_listed_location)),
+                           const SizedBox(width: 16),
+                           Expanded(child: _buildStatCard("ON CAMPUS", "1.2k", AppTheme.success, Icons.people)), // Mock data for demo
+                        ],
+                     ),
+                     
+                     const SizedBox(height: 32),
+                     const Text("SYSTEM STATUS", style: TextStyle(color: AppTheme.textGrey, letterSpacing: 2, fontWeight: FontWeight.bold)),
+                     const SizedBox(height: 16),
+                     GlassyCard(
+                        child: Column(
+                           children: [
+                              _buildSystemRow("Gate Sensors", "Online", AppTheme.success),
+                              const Divider(color: Colors.white12),
+                              _buildSystemRow("Database Sync", "Active", AppTheme.success),
+                              const Divider(color: Colors.white12),
+                              _buildSystemRow("Notifications Service", "Running", AppTheme.success),
+                           ],
+                        ),
+                     )
+                  ],
+               ),
             ),
          );
       }
@@ -295,56 +334,76 @@ class _WardenDashboardState extends State<WardenDashboard> {
 
   Widget _buildApprovalsTab() {
      return Consumer<WardenProvider>(builder: (context, provider, _) { 
-        if (provider.isLoading) return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
-        if (provider.pendingApprovals.isEmpty) return _buildEmptyState("No Pending Approvals");
+        final pending = provider.pendingApprovals;
         
-        return ListView.builder(
-           padding: const EdgeInsets.all(24),
-           itemCount: provider.pendingApprovals.length,
-           itemBuilder: (context, index) {
-              final p = provider.pendingApprovals[index];
-              return Padding(
-                 padding: const EdgeInsets.only(bottom: 16),
-                 child: GlassyCard(
-                    onTap: () async {
-                       final result = await Navigator.push(
-                          context, 
-                          MaterialPageRoute(
-                             builder: (_) => ReviewRequestScreen(
-                                pass: p, 
-                                reviewerId: _wardenId ?? '', 
-                                token: _token ?? '',
-                                isWarden: true,
-                              )
-                          )
-                       );
-                       if (result == true) {
-                          provider.loadPendingApprovals(widget.token);
-                       }
-                    },
-                    child: Row(
-                       children: [
-                          CircleAvatar(backgroundColor: AppTheme.primary.withOpacity(0.2), child: Text(p.type[0].toUpperCase(), style: const TextStyle(color: AppTheme.primary))),
-                          const SizedBox(width: 16),
-                          Expanded(
-                             child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                   Text(p.type.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                   Text(DateFormat('MMM dd, HH:mm').format(p.validFrom.toLocal()), style: const TextStyle(color: AppTheme.textGrey, fontSize: 12)),
-                                ],
-                             ),
-                          ),
-                          Container(
-                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                             decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(20)),
-                             child: const Text("REVIEW", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
-                          )
-                       ],
-                    ),
+        if (pending.isEmpty) {
+           return RefreshIndicator(
+              onRefresh: () async => _refreshData(),
+              color: AppTheme.primary,
+              backgroundColor: AppTheme.surface,
+              child: SingleChildScrollView(
+                 physics: const AlwaysScrollableScrollPhysics(),
+                 child: Container(
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    alignment: Alignment.center,
+                    child: Text("No Pending Approvals", style: TextStyle(color: AppTheme.textGrey.withOpacity(0.5), fontSize: 18))
                  ),
-              );
-           },
+              ),
+           );
+        }
+        
+        return RefreshIndicator(
+           onRefresh: () async => _refreshData(),
+           color: AppTheme.primary,
+           backgroundColor: AppTheme.surface,
+           child: ListView.builder(
+              padding: const EdgeInsets.all(24),
+              itemCount: pending.length,
+              itemBuilder: (context, index) {
+                 final p = pending[index];
+                 return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: GlassyCard(
+                       onTap: () async {
+                          final result = await Navigator.push(
+                             context, 
+                             MaterialPageRoute(
+                                builder: (_) => ReviewRequestScreen(
+                                   pass: p, 
+                                   reviewerId: _wardenId ?? '', 
+                                   token: _token ?? '',
+                                   isWarden: true,
+                                 )
+                             )
+                          );
+                          if (result == true) {
+                             _refreshData();
+                          }
+                       },
+                       child: Row(
+                          children: [
+                             CircleAvatar(backgroundColor: AppTheme.primary.withOpacity(0.2), child: Text(p.type[0].toUpperCase(), style: const TextStyle(color: AppTheme.primary))),
+                             const SizedBox(width: 16),
+                             Expanded(
+                                child: Column(
+                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                   children: [
+                                      Text(p.type.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                      Text(DateFormat('MMM dd, HH:mm').format(p.validFrom.toLocal()), style: const TextStyle(color: AppTheme.textGrey, fontSize: 12)),
+                                   ],
+                                ),
+                             ),
+                             Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(20)),
+                                child: const Text("REVIEW", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
+                             )
+                          ],
+                       ),
+                    ),
+                 );
+              },
+           ),
         );
      });
   }
@@ -352,7 +411,6 @@ class _WardenDashboardState extends State<WardenDashboard> {
   Widget _buildHistoryTab() {
     return Consumer<WardenProvider>(builder: (context, provider, _) {
        final history = provider.passHistory;
-       if (provider.isLoading) return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
        if (history.isEmpty) {
           return Center(
              child: Column(
@@ -421,30 +479,35 @@ class _WardenDashboardState extends State<WardenDashboard> {
   Widget _buildSOSAlertsTab() {
      return Consumer<WardenProvider>(builder: (context, provider, _) {
         if (provider.allSOSAlerts.isEmpty) return _buildEmptyState("No Active Alerts");
-        return ListView.builder(
-           padding: const EdgeInsets.all(24),
-           itemCount: provider.allSOSAlerts.length,
-           itemBuilder: (context, index) {
-              final alert = provider.allSOSAlerts[index];
-              return Padding(
-                 padding: const EdgeInsets.only(bottom: 16),
-                 child: GlassyCard(
-                    child: ListTile(
-                       leading: const Icon(Icons.emergency, color: AppTheme.accent, size: 32),
-                       title: const Text("SOS ALERT", style: TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
-                       subtitle: Text(alert['alertType'] ?? 'Emergency', style: const TextStyle(color: Colors.white)),
-                       trailing: IconButton(
-                          icon: const Icon(Icons.check_circle_outline, color: AppTheme.success),
-                           onPressed: () {
-                              if (_token != null) {
-                                provider.resolveSOSAlert(alert['id'], _token!);
-                              }
-                           },
-                       ),
-                    ),
-                 ),
-              );
-           },
+        return RefreshIndicator(
+          onRefresh: () async => _refreshData(),
+          color: AppTheme.accent,
+          backgroundColor: AppTheme.surface,
+          child: ListView.builder(
+             padding: const EdgeInsets.all(24),
+             itemCount: provider.allSOSAlerts.length,
+             itemBuilder: (context, index) {
+                final alert = provider.allSOSAlerts[index];
+                return Padding(
+                   padding: const EdgeInsets.only(bottom: 16),
+                   child: GlassyCard(
+                      child: ListTile(
+                         leading: const Icon(Icons.emergency, color: AppTheme.accent, size: 32),
+                         title: const Text("SOS ALERT", style: TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
+                         subtitle: Text(alert['alertType'] ?? 'Emergency', style: const TextStyle(color: Colors.white)),
+                         trailing: IconButton(
+                            icon: const Icon(Icons.check_circle_outline, color: AppTheme.success),
+                             onPressed: () {
+                                if (_token != null) {
+                                  provider.resolveSOSAlert(alert['id'], _token!);
+                                }
+                             },
+                         ),
+                      ),
+                   ),
+                );
+             },
+          ),
         );
      });
   }
@@ -452,28 +515,43 @@ class _WardenDashboardState extends State<WardenDashboard> {
   Widget _buildViolationsTab() {
      return Consumer<WardenProvider>(builder: (context, provider, _) {
          if (provider.geofenceViolations.isEmpty) return _buildEmptyState("No Violations");
-         return ListView.builder(
-            padding: const EdgeInsets.all(24),
-            itemCount: provider.geofenceViolations.length,
-            itemBuilder: (context, index) {
-               final v = provider.geofenceViolations[index];
-               return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: GlassyCard(
-                     child: ListTile(
-                        leading: const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 32),
-                        title: Text(v['studentName'] ?? 'Unknown Student', style: const TextStyle(color: Colors.white)),
-                        subtitle: const Text("Outside Campus Boundary", style: TextStyle(color: AppTheme.textGrey)),
+         return RefreshIndicator(
+            onRefresh: () async => _refreshData(),
+            color: Colors.orange,
+            backgroundColor: AppTheme.surface,
+            child: ListView.builder(
+               padding: const EdgeInsets.all(24),
+               itemCount: provider.geofenceViolations.length,
+               itemBuilder: (context, index) {
+                  final v = provider.geofenceViolations[index];
+                  return Padding(
+                     padding: const EdgeInsets.only(bottom: 16),
+                     child: GlassyCard(
+                        child: ListTile(
+                           leading: const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 32),
+                           title: Text(v['studentName'] ?? 'Unknown Student', style: const TextStyle(color: Colors.white)),
+                           subtitle: const Text("Outside Campus Boundary", style: TextStyle(color: AppTheme.textGrey)),
+                        ),
                      ),
-                  ),
-               );
-            }
+                  );
+               }
+            ),
          );
      });
   }
 
   Widget _buildEmptyState(String msg) {
-     return Center(child: Text(msg, style: TextStyle(color: AppTheme.textGrey.withOpacity(0.5), fontSize: 18)));
+     return RefreshIndicator(
+        onRefresh: () async => _refreshData(),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            alignment: Alignment.center,
+            child: Text(msg, style: TextStyle(color: AppTheme.textGrey.withOpacity(0.5), fontSize: 18)),
+          ),
+        ),
+     );
   }
 }
 
