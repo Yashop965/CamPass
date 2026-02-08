@@ -1,0 +1,78 @@
+name: campass_app
+description: Smart Campus Pass - frontend
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  shared_preferences: ^2.2.2
+  cupertino_icons: ^1.0.2
+  google_fonts: ^6.1.0
+  # State management (you can swap to Riverpod later if you prefer)
+  provider: ^6.0.5
+
+  # HTTP & secure storage
+  http: ^1.2.0
+  flutter_secure_storage: ^8.0.0
+
+  # Barcode scanning (recommended - maintained)
+  mobile_scanner: ^3.0.0
+  barcode_widget: ^2.0.1
+  # Show barcode image (if you want to render client-side)
+  qr_flutter: ^4.0.0
+
+  # Biometric
+  local_auth: ^2.1.6
+
+  # Location & maps
+  geolocator: ^9.0.2
+  google_maps_flutter: ^2.4.4
+
+  # Notifications & animations
+  lottie: ^2.2.0
+  animations: ^2.0.6
+  firebase_messaging: ^14.7.10
+  
+  # Shake gesture & sensors
+  shake_gesture: ^1.0.1
+  sensors_plus: 7.0.0
+
+  # Utils
+  intl: ^0.18.0
+  audioplayers: ^5.0.0
+  path_provider: ^2.0.0
+  firebase_core: ^2.32.0
+  nsd: ^4.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+  integration_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  build_runner: ^2.4.7
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+flutter:
+  uses-material-design: true
+ 
+  assets:
+    - assets/lottie/
+    - assets/sounds/
+  
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
