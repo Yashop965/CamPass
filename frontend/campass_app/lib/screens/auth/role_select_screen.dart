@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/session_manager.dart';
+import '../../core/theme/app_theme.dart';
 
 class RoleSelectScreen extends StatefulWidget {
   const RoleSelectScreen({super.key});
@@ -138,7 +139,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                                   decoration: BoxDecoration(
                                     color: isSelected
                                         ? Theme.of(context).primaryColor.withOpacity(0.1)
-                                        : Colors.grey.shade100,
+                                        : AppTheme.surface.withOpacity(0.5),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(
@@ -146,7 +147,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                                     size: 32,
                                     color: isSelected
                                         ? Theme.of(context).primaryColor
-                                        : Colors.grey.shade600,
+                                        : Colors.white70,
                                   ),
                                 ),
                                 const SizedBox(width: 16),
@@ -159,7 +160,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w600,
-                                          color: isSelected ? Theme.of(context).primaryColor : Colors.black87,
+                                          color: isSelected ? Theme.of(context).primaryColor : Colors.white,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -167,7 +168,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                                         role['description'],
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.grey.shade600,
+                                          color: Colors.white70,
                                         ),
                                       ),
                                     ],
