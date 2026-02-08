@@ -106,7 +106,8 @@ class WardenProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _errorMessage = 'Failed to approve pass';
+        final errorData = jsonDecode(response.body);
+        _errorMessage = errorData['message'] ?? 'Failed to approve pass';
         return false;
       }
     } catch (e) {

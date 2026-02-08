@@ -167,7 +167,8 @@ class ParentProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _errorMessage = 'Failed to reject pass';
+        final errorData = jsonDecode(response.body);
+        _errorMessage = errorData['message'] ?? 'Failed to reject pass';
         return false;
       }
     } catch (e) {

@@ -118,26 +118,31 @@ module.exports = {
 
       // success
       // Logic for Exited/Entered toggle
-      now.setTime(new Date().getTime()); // Update 'now' to current time for logic
-      let scanType = '';
+      // Constraint: Block scanning if already entered (Prevent 3rd scan)
+      if (pass.entryTime) {
+        return res.status(400).json({ message: "Pass already completed (Student already entered)" });
+      }
 
-      if (!pass.exitTime) {
-        // First scan: Marking Exit
+      let statusUpdate = "";
+      let scanType = "";
+
+      // State Machine Logic
+      if (pass.status === 'approved_warden' && !pass.exitTime) {
+        // First scan: Exit
         pass.exitTime = now;
-        pass.status = 'exited';
-        scanType = 'exit';
-        await pass.save();
-      } else if (!pass.entryTime) {
-        // Second scan: Marking Entry
+        pass.status = 'active'; // Change status to active on exit
+        statusUpdate = "Exited";
+        scanType = "exit";
+      } else if (pass.status === 'active' || (pass.exitTime && !pass.entryTime)) {
+        // Second scan: Entry
         pass.entryTime = now;
         pass.status = 'entered';
-        scanType = 'entry';
-        await pass.save();
+        statusUpdate = "Entered";
+        scanType = "entry";
 
-        // Check if Late Entry
+        // Handle Late Entry Alert
         if (now > new Date(pass.validTo)) {
           const { sendToTopic } = require('../config/firebase');
-          // Format time for India (UTC+5:30) for the notification message
           const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
           const formattedTime = istTime.toISOString().substring(11, 16);
 
@@ -148,11 +153,10 @@ module.exports = {
           const lateData = {
             type: 'late_entry',
             passId: pass.id,
-            studentId: pass.userId,
             studentName: pass.user.name,
-            entryTime: now.toISOString(),
-            validUntil: pass.validTo.toISOString()
+            entryTime: now.toISOString()
           };
+
           // Notify Wardens
           await sendToTopic('warden_alerts', lateNotif, lateData).catch(console.error);
 
@@ -162,17 +166,19 @@ module.exports = {
           }
         }
       } else {
-        return res.status(400).json({ message: "Pass already used for entry" });
+        // Block scanning if pending approval or other invalid state
+        let msg = "Pass not valid for scanning.";
+        if (pass.status === 'pending') msg = "Pass requires Parent Approval.";
+        if (pass.status === 'approved_parent') msg = "Pass requires Warden Approval.";
+        if (pass.status === 'rejected') msg = "Pass has been rejected.";
+
+        return res.status(400).json({ message: msg });
       }
 
+      await pass.save();
       const passData = pass.toJSON();
       passData.studentName = pass.user?.name || null;
-
-      return res.json({
-        message: `Student ${scanType === 'exit' ? 'Exited' : 'Entered'}`,
-        scanType,
-        pass: passData
-      });
+      return res.json({ message: `Student ${statusUpdate} Successfully`, pass: passData, scanType });
     } catch (err) {
       console.error("scanPass error", err);
       res.status(500).json({ message: "Server error" });
@@ -192,7 +198,6 @@ module.exports = {
     }
   },
 
-  // approve by parent
   // approve by parent
   async approveByParent(req, res) {
     try {
@@ -294,7 +299,13 @@ module.exports = {
       const { Op } = require("sequelize");
       const passes = await Pass.findAll({
         where: {
-          status: { [Op.in]: ['pending', 'approved_parent'] }
+          [Op.or]: [
+            { status: 'approved_parent' }, // Already approved by parent (Outings)
+            {
+              status: 'pending',
+              type: { [Op.ne]: 'outing' } // Other types that don't need parents
+            }
+          ]
         },
         include: [
           { model: User, as: "user", attributes: ["id", "name", "email"] },
@@ -344,7 +355,15 @@ module.exports = {
         ],
         order: [['createdAt', 'DESC']],
       });
-      res.json(passes);
+
+      // Map to include studentName at top level for frontend
+      const mappedPasses = passes.map(p => {
+        const passData = p.toJSON();
+        passData.studentName = passData.user?.name || null;
+        return passData;
+      });
+
+      res.json(mappedPasses);
     } catch (err) {
       console.error('getPendingParentPasses error', err);
       res.status(500).json({ message: 'Server error' });
@@ -401,10 +420,15 @@ module.exports = {
       }
 
       const pass = await Pass.findByPk(id, {
-        include: [{ model: User, as: "user", attributes: ["id", "fcm_token"] }]
+        include: [{ model: User, as: "user", attributes: ["id", "fcm_token", "parentId"] }]
       });
 
       if (!pass) return res.status(404).json({ message: 'Pass not found' });
+
+      // Security: If the user is a parent, ensure they can only reject their OWN child's pass
+      if (req.user.role === 'parent' && pass.user.parentId !== req.user.id) {
+        return res.status(403).json({ message: 'Forbidden: You can only reject your own child\'s pass.' });
+      }
 
       // Update pass
       pass.status = 'rejected';

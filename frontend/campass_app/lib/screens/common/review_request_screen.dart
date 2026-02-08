@@ -95,6 +95,7 @@ class _ReviewRequestScreenState extends State<ReviewRequestScreen> {
          if (widget.isWarden) {
             await _passService.rejectPass(widget.pass.id, reason, widget.token);
          } else {
+            if (!mounted) return;
             final parentProvider = Provider.of<ParentProvider>(context, listen: false);
             final success = await parentProvider.rejectPass(widget.pass.id, reason, widget.token);
             if (!success) {
@@ -104,10 +105,17 @@ class _ReviewRequestScreenState extends State<ReviewRequestScreen> {
       }
       
       if (!mounted) return;
+      
+      String msg = approve ? 'Request Approved' : 'Request Rejected';
+      if (approve && !widget.isWarden) {
+        msg = "Approved! Now waiting for Warden's final approval.";
+      }
+
       Navigator.pop(context, true); // Return true to refresh
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(approve ? 'Request Approved' : 'Request Rejected'),
+        content: Text(msg),
         backgroundColor: approve ? AppTheme.success : AppTheme.accent,
+        duration: const Duration(seconds: 4),
       ));
     } catch (e) {
       if (!mounted) return;
