@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import '../../services/session_manager.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../widgets/glassy_card.dart';
 import '../../widgets/gradient_button.dart';
@@ -100,8 +101,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
-      body: Stack(
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primaryDark, AppColors.primary],
+          ),
+        ),
+        child: Stack(
         children: [
           // 1. Ambient Background Orb
           Positioned(
@@ -112,10 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.secondary.withOpacity(0.3),
-                boxShadow: const [
+                color: Colors.white.withOpacity(0.1),
+                boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primary,
+                    color: AppColors.primaryLight.withOpacity(0.5),
                     blurRadius: 150,
                     spreadRadius: 50,
                   )
@@ -132,10 +141,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 200,
                 decoration: BoxDecoration(
                    shape: BoxShape.circle,
-                   color: AppTheme.primary.withOpacity(0.2),
-                   boxShadow: const [
+                   color: Colors.white.withOpacity(0.05),
+                   boxShadow: [
                       BoxShadow(
-                         color: AppTheme.secondary,
+                         color: AppColors.primaryDark.withOpacity(0.5),
                          blurRadius: 120,
                          spreadRadius: 40,
                       )
@@ -145,125 +154,162 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           // 2. Main Content
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Header
-                    const Icon(
-                      Icons.shield_outlined, 
-                      size: 64, 
-                      color: AppTheme.primary
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'CAMPASS', 
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                        letterSpacing: 2,
-                        color: Colors.white,
-                        shadows: [
-                          const Shadow(color: AppTheme.primary, blurRadius: 20),
-                        ],
+          Positioned.fill(
+            child: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Header
+                      const Icon(
+                        Icons.shield_outlined, 
+                        size: 64, 
+                        color: Colors.white
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Secure Campus Access',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: AppTheme.primary.withOpacity(0.8),
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-
-                    // Glass Form Card
-                    GlassyCard(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Login as ${_selectedRole?.toUpperCase() ?? 'Admin'}',
-                              style: Theme.of(context).textTheme.displayMedium,
-                            ),
-                            const SizedBox(height: 24),
-                            
-                            // Email
-                            TextFormField(
-                              controller: _emailController,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: const InputDecoration(
-                                labelText: 'Email Address',
-                                prefixIcon: Icon(Icons.email_outlined),
-                              ),
-                              validator: _validateEmail,
-                            ),
-                            const SizedBox(height: 16),
-                            
-                            // Password
-                            TextFormField(
-                              controller: _passwordController,
-                              obscureText: _obscurePassword,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
-                                labelText: 'Password',
-                                prefixIcon: const Icon(Icons.lock_outline),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                                    color: AppTheme.textGrey,
-                                  ),
-                                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                                ),
-                              ),
-                              validator: _validatePassword,
-                            ),
-                            
-                            const SizedBox(height: 32),
-                            
-                            // Login Button
-                            GradientButton(
-                              text: 'AUTHENTICATE',
-                              icon: Icons.login_rounded,
-                              isLoading: _isLoading,
-                              onPressed: _login,
-                            ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'CAMPASS', 
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                          letterSpacing: 2,
+                          color: Colors.white,
+                          shadows: [
+                            const Shadow(color: Colors.black26, blurRadius: 20),
                           ],
                         ),
                       ),
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    Center(
-                      child: TextButton(
-                         onPressed: () {
-                            // Register Navigation
-                         },
-                         child: RichText(
-                            text: TextSpan(
-                               text: "Don't have an account? ",
-                               style: Theme.of(context).textTheme.bodyMedium,
-                               children: const [
-                                  TextSpan(
-                                     text: "Register",
-                                     style: TextStyle(
-                                        color: AppTheme.primary,
-                                        fontWeight: FontWeight.bold,
-                                     ),
-                                  ),
-                               ]
-                            ),
-                         ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Secure Campus Access',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.white70,
+                          letterSpacing: 1.2,
+                        ),
                       ),
-                    )
-                  ],
+                      const SizedBox(height: 48),
+
+                      // Glass Form Card
+                      GlassyCard(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Login as ${_selectedRole?.toUpperCase() ?? 'Admin'}',
+                                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              
+                              // Email
+                              TextFormField(
+                                controller: _emailController,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Email Address',
+                                  labelStyle: const TextStyle(color: Colors.white70),
+                                  prefixIcon: const Icon(Icons.email_outlined, color: Colors.white70),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(color: Colors.white, width: 1.5),
+                                  ),
+                                ),
+                                validator: _validateEmail,
+                              ),
+                              const SizedBox(height: 16),
+                              
+                              // Password
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: _obscurePassword,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  labelStyle: const TextStyle(color: Colors.white70),
+                                  prefixIcon: const Icon(Icons.lock_outline, color: Colors.white70),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                      color: Colors.white70,
+                                    ),
+                                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.1),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(color: Colors.white, width: 1.5),
+                                  ),
+                                ),
+                                validator: _validatePassword,
+                              ),
+                              
+                              const SizedBox(height: 32),
+                              
+                              // Login Button
+                              GradientButton(
+                                text: 'AUTHENTICATE',
+                                icon: Icons.login_rounded,
+                                isLoading: _isLoading,
+                                onPressed: _login,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      Center(
+                        child: TextButton(
+                           onPressed: () {
+                              Navigator.pushNamed(context, '/register');
+                           },
+                           child: RichText(
+                              text: TextSpan(
+                                 text: "Don't have an account? ",
+                                 style: const TextStyle(color: Colors.white70),
+                                 children: const [
+                                    TextSpan(
+                                       text: "Register",
+                                       style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: Colors.white, 
+                                       ),
+                                    ),
+                                 ]
+                              ),
+                           ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -285,6 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
              ),
           ),
         ],
+      ),
       ),
     );
   }

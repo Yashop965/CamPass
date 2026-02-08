@@ -102,6 +102,11 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
             } else if (type == 'geofence_violation') {
                snackBarMsg = "Violation Detected: ${message.notification?.body ?? ''}";
                shouldRefresh = true;
+            } else if (type == 'late_entry') {
+               snackBarMsg = "LATE ENTRY: ${message.notification?.body ?? ''}";
+               final wardenProvider = Provider.of<WardenProvider>(context, listen: false);
+               wardenProvider.addLateEntryAlert(message.data);
+               shouldRefresh = true;
             }
 
             if (shouldRefresh) {
@@ -204,8 +209,7 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
                                _buildOverviewTab(),
                                _buildApprovalsTab(),
                                _buildHistoryTab(),
-                               _buildSOSAlertsTab(),
-                               _buildViolationsTab(),
+                               _buildAlertsTab(),
                             ],
                          ),
                       )
@@ -236,8 +240,9 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
                  items: const [
                     BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Overview'),
                     BottomNavigationBarItem(icon: Icon(Icons.fact_check_outlined), label: 'Approvals'),
-                    BottomNavigationBarItem(icon: Icon(Icons.emergency_outlined), label: 'SOS'),
-                    BottomNavigationBarItem(icon: Icon(Icons.warning_amber_rounded), label: 'Violations'),
+                     BottomNavigationBarItem(icon: Icon(Icons.history_outlined), label: 'History'),
+
+                    BottomNavigationBarItem(icon: Icon(Icons.notifications_active_outlined), label: 'Alerts'),
                  ],
               ),
            ),
@@ -382,14 +387,22 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
                        },
                        child: Row(
                           children: [
-                             CircleAvatar(backgroundColor: AppTheme.primary.withOpacity(0.2), child: Text(p.type[0].toUpperCase(), style: const TextStyle(color: AppTheme.primary))),
+                             CircleAvatar(backgroundColor: AppTheme.primary.withOpacity(0.2), child: Text((p.studentName?.isNotEmpty == true ? p.studentName![0] : p.type[0]).toUpperCase(), style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold))),
                              const SizedBox(width: 16),
                              Expanded(
                                 child: Column(
                                    crossAxisAlignment: CrossAxisAlignment.start,
                                    children: [
-                                      Text(p.type.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                      Text(DateFormat('MMM dd, HH:mm').format(p.validFrom.toLocal()), style: const TextStyle(color: AppTheme.textGrey, fontSize: 12)),
+                                       Text(p.studentName ?? 'Unknown Student', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+
+                                       const SizedBox(height: 4),
+
+                                       Text('${p.type.toUpperCase()}${p.purpose != null ? " • ${p.purpose}" : ""}', style: const TextStyle(color: AppTheme.textGrey, fontSize: 13), overflow: TextOverflow.ellipsis),
+
+                                       const SizedBox(height: 2),
+
+                                       Text(DateFormat('MMM dd, hh:mm a').format(p.validFrom.toLocal()), style: const TextStyle(color: AppTheme.textGrey, fontSize: 12)),
+
                                    ],
                                 ),
                              ),
@@ -460,9 +473,23 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                                Text("${p.type.toUpperCase()} • ${p.status.toUpperCase()}", style: TextStyle(color: statusColor, fontSize: 12)),
-                               Text(DateFormat('MMM dd, HH:mm').format(p.validFrom.toLocal()), style: const TextStyle(color: AppTheme.textGrey, fontSize: 12)),
-                            ],
+                               Text(DateFormat('MMM dd, hh:mm a').format(p.validFrom.toLocal()), style: const TextStyle(color: AppTheme.textGrey, fontSize: 12)),
+                                if (p.rejectionReason != null && p.rejectionReason!.isNotEmpty) ...[
+
+
+                                   const SizedBox(height: 4),
+
+
+                                   Text("Reason: ${p.rejectionReason}", style: const TextStyle(color: AppTheme.error, fontSize: 12, fontStyle: FontStyle.italic)),
+
+
+                                ],
+
+
+                         ],
+
                          ),
+
                          trailing: const Icon(Icons.chevron_right, color: Colors.white24),
                          onTap: () {
                              // Show details if needed
@@ -476,43 +503,219 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
     });
   }
 
-  Widget _buildSOSAlertsTab() {
-     return Consumer<WardenProvider>(builder: (context, provider, _) {
-        if (provider.allSOSAlerts.isEmpty) return _buildEmptyState("No Active Alerts");
-        return RefreshIndicator(
-          onRefresh: () async => _refreshData(),
-          color: AppTheme.accent,
-          backgroundColor: AppTheme.surface,
-          child: ListView.builder(
-             padding: const EdgeInsets.all(24),
-             itemCount: provider.allSOSAlerts.length,
-             itemBuilder: (context, index) {
-                final alert = provider.allSOSAlerts[index];
-                return Padding(
-                   padding: const EdgeInsets.only(bottom: 16),
-                   child: GlassyCard(
-                      child: ListTile(
-                         leading: const Icon(Icons.emergency, color: AppTheme.accent, size: 32),
-                         title: const Text("SOS ALERT", style: TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
-                         subtitle: Text(alert['alertType'] ?? 'Emergency', style: const TextStyle(color: Colors.white)),
-                         trailing: IconButton(
-                            icon: const Icon(Icons.check_circle_outline, color: AppTheme.success),
-                             onPressed: () {
-                                if (_token != null) {
-                                  provider.resolveSOSAlert(alert['id'], _token!);
-                                }
-                             },
-                         ),
-                      ),
-                   ),
-                );
-             },
+  Widget _buildAlertsTab() {
+    return Consumer<WardenProvider>(builder: (context, provider, _) {
+      final sosAlerts = provider.allSOSAlerts;
+      final violations = provider.geofenceViolations;
+      final lateEntries = provider.lateEntryAlerts;
+      final hasAlerts = sosAlerts.isNotEmpty || violations.isNotEmpty || lateEntries.isNotEmpty;
+
+      if (!hasAlerts) return _buildEmptyState("No Active Alerts");
+
+      return Column(
+        children: [
+          if (sosAlerts.isNotEmpty || lateEntries.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("ACTIVE ALERTS", style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                  TextButton.icon(
+                    onPressed: () {
+                      if (_token != null) {
+                        provider.resolveAllSOS(_token!);
+                        // Also clear late entries if desired, or just refresh
+                        _refreshData();
+                      }
+                    },
+                    icon: const Icon(Icons.done_all, color: Colors.white),
+                    label: const Text("RESOLVE ALL", style: TextStyle(color: Colors.white)),
+                    style: TextButton.styleFrom(backgroundColor: Colors.white.withOpacity(0.1))
+                  )
+                ],
+              ),
+            ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async => _refreshData(),
+              color: AppTheme.accent,
+              backgroundColor: AppTheme.surface,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(24),
+                itemCount: sosAlerts.length + violations.length + lateEntries.length,
+                itemBuilder: (context, index) {
+                  if (index < sosAlerts.length) {
+                    final alert = sosAlerts[index];
+                    return _buildSOSAlertCard(alert, provider);
+                  } else if (index < sosAlerts.length + lateEntries.length) {
+                    final lateEntry = lateEntries[index - sosAlerts.length];
+                    return _buildLateEntryCard(lateEntry);
+                  } else {
+                    final v = violations[index - sosAlerts.length - lateEntries.length];
+                    return _buildViolationCard(v);
+                  }
+                },
+              ),
+            ),
           ),
-        );
-     });
+        ],
+      );
+    });
   }
-  
-  Widget _buildViolationsTab() {
+
+  Widget _buildSOSAlertCard(dynamic alert, WardenProvider provider) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: GlassyCard(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.emergency, color: AppTheme.accent, size: 32),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(color: AppTheme.accent, borderRadius: BorderRadius.circular(12)),
+                    child: const Text("SOS", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.check_circle_outline, color: AppTheme.success),
+                    onPressed: () {
+                      if (_token != null) {
+                        provider.resolveSOSAlert(alert['id'], _token!);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(alert['studentName'] ?? 'Unknown Student', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 4),
+              Text(alert['alertType'] ?? 'Emergency Alert', style: const TextStyle(color: AppTheme.textGrey, fontSize: 13)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildViolationCard(dynamic v) {
+    final timestamp = v['timestamp'] != null ? DateTime.parse(v['timestamp']) : null;
+    final latestPass = v['latestPass'];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: GlassyCard(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 32),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(color: Colors.orange, borderRadius: BorderRadius.circular(12)),
+                    child: const Text("VIOLATION", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(v['studentName'] ?? 'Unknown Student', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 4),
+              const Text("Outside Campus Boundary", style: TextStyle(color: AppTheme.textGrey, fontSize: 12)),
+              if (timestamp != null) ...[
+                const SizedBox(height: 12),
+                const Divider(color: Colors.white12),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.access_time, color: AppTheme.textGrey, size: 16),
+                    const SizedBox(width: 8),
+                    Text("Detected: ${DateFormat('MMM dd, hh:mm a').format(timestamp.toLocal())}", style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                  ],
+                ),
+              ],
+              if (latestPass != null) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.badge_outlined, color: AppTheme.primary, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text("Active Pass: ${latestPass['type']?.toUpperCase() ?? 'N/A'} • ${latestPass['purpose'] ?? 'No purpose'}", style: const TextStyle(color: AppTheme.primary, fontSize: 13), overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                ),
+              ] else ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.block, color: AppTheme.error, size: 16),
+                    const SizedBox(width: 8),
+                    const Text("No Active Pass", style: TextStyle(color: AppTheme.error, fontSize: 13, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLateEntryCard(dynamic data) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: GlassyCard(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.timer_off_outlined, color: AppTheme.error, size: 32),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(color: AppTheme.error, borderRadius: BorderRadius.circular(12)),
+                    child: const Text("LATE ENTRY", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(data['studentName'] ?? 'Unknown Student', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.login, color: AppTheme.textGrey, size: 16),
+                  const SizedBox(width: 8),
+                  Text("Entered: ${DateFormat('hh:mm a').format(DateTime.parse(data['entryTime']).toLocal())}", style: const TextStyle(color: Colors.white, fontSize: 13)),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.event_available, color: AppTheme.textGrey, size: 16),
+                  const SizedBox(width: 8),
+                  Text("Expired: ${DateFormat('hh:mm a').format(DateTime.parse(data['validUntil']).toLocal())}", style: const TextStyle(color: AppTheme.textGrey, fontSize: 13)),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+Widget _buildViolationsTab() {
      return Consumer<WardenProvider>(builder: (context, provider, _) {
          if (provider.geofenceViolations.isEmpty) return _buildEmptyState("No Violations");
          return RefreshIndicator(

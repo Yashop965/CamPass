@@ -27,7 +27,8 @@ class ParentTrackingScreen extends StatefulWidget {
 
 class _ParentTrackingScreenState extends State<ParentTrackingScreen> with TickerProviderStateMixin {
   final MapController _mapController = MapController();
-  
+  late AnimationController _pulseController;
+  late ParentProvider _parentProvider; // visual fix: capture provider to use in dispose
   
   // Default to a campus location (IILM Gurugram)
   static final LatLng _kCampus = MapConstants.campusLocation;
@@ -35,6 +36,11 @@ class _ParentTrackingScreenState extends State<ParentTrackingScreen> with Ticker
   @override
   void initState() {
     super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: false);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
        if (widget.childId.isNotEmpty) {
            Provider.of<ParentProvider>(context, listen: false).startChildTracking(widget.childId, widget.token);
@@ -43,10 +49,15 @@ class _ParentTrackingScreenState extends State<ParentTrackingScreen> with Ticker
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _parentProvider = Provider.of<ParentProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
-    if (mounted) {
-       Provider.of<ParentProvider>(context, listen: false).stopChildTracking();
-    }
+    _pulseController.dispose();
+    _parentProvider.stopChildTracking(); // Use captured reference
     super.dispose();
   }
 
@@ -123,8 +134,8 @@ class _ParentTrackingScreenState extends State<ParentTrackingScreen> with Ticker
                        if (currentPos != null)
                          Marker(
                            point: currentPos,
-                           width: 80,
-                           height: 80,
+                           width: 100, // Increased size for pulse
+                           height: 100,
                            child: _buildPulsingMarker(provider.childLocation['studentName'] ?? 'Student'),
                          ),
                      ],
@@ -176,7 +187,7 @@ class _ParentTrackingScreenState extends State<ParentTrackingScreen> with Ticker
 
           // 5. Info Card & Request Button
           Positioned(
-            bottom: 100, 
+            bottom: 110, // Moved up slightly to avoid bottom nav intersection
             left: 16, right: 16,
             child: Consumer<ParentProvider>(
                builder: (context, provider, _) { 
@@ -253,53 +264,69 @@ class _ParentTrackingScreenState extends State<ParentTrackingScreen> with Ticker
   }
 
   Widget _buildPulsingMarker(String name) {
-     return TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.8, end: 1.2),
-        duration: const Duration(milliseconds: 1000),
-        builder: (context, value, child) {
-           return Stack(
-              alignment: Alignment.center,
-              children: [
-                // Pulse Ring
-                 Container(
-                    width: 60 * value,
-                    height: 60 * value,
-                    decoration: BoxDecoration(
-                       shape: BoxShape.circle,
-                       color: AppTheme.primary.withOpacity(0.3 * (1.2 - value)), // Fade out
-                    ),
-                 ),
-                 // Main Marker
-                 child!,
-                 // Validated Badge
-                 Positioned(
-                    bottom: 0,
-                    child: Container(
-                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                       decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(8)),
-                       child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                    ),
-                 )
-              ],
-           );
-        },
-        onEnd: () {
-           // To loop, we would need a stateful widget or recursive call to setState, 
-           // but simpler is fine. For continuous pulse, use AnimationController.
-           // Since TweenBuilder stops, this is a single pulse per build.
-           // Let's use a simpler static design with shadow for now as loop requires Controller.
-        },
-        child: Container(
-           padding: const EdgeInsets.all(4),
-           decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-           ),
-           child: const CircleAvatar(
-              backgroundColor: AppTheme.primary,
-              child: Icon(Icons.person, color: Colors.black),
-           ),
-        ),
+     return AnimatedBuilder(
+       animation: _pulseController,
+       builder: (context, child) {
+         // Ring 1 (expands and fades)
+         double value1 = _pulseController.value;
+         double opacity1 = (1.0 - value1).clamp(0.0, 1.0);
+         double size1 = 40 + (value1 * 60); // 40 -> 100
+
+         // Ring 2 (follows with delay)
+         double value2 = (_pulseController.value + 0.5) % 1.0;
+         double opacity2 = (1.0 - value2).clamp(0.0, 1.0);
+         double size2 = 40 + (value2 * 60);
+
+         return Stack(
+            alignment: Alignment.center,
+            children: [
+               // Outer Rings
+               Container(
+                  width: size1, height: size1,
+                  decoration: BoxDecoration(
+                     shape: BoxShape.circle,
+                     color: AppTheme.primary.withOpacity(opacity1 * 0.4),
+                  ),
+               ),
+               Container(
+                  width: size2, height: size2,
+                  decoration: BoxDecoration(
+                     shape: BoxShape.circle,
+                     color: AppTheme.primary.withOpacity(opacity2 * 0.4),
+                  ),
+               ),
+               
+               // Core Marker
+               Container(
+                  width: 44, height: 44,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                     color: Colors.white,
+                     shape: BoxShape.circle,
+                     boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)]
+                  ),
+                  child: const CircleAvatar(
+                     backgroundColor: AppTheme.primary,
+                     child: Icon(Icons.person, color: Colors.black, size: 24),
+                  ),
+               ),
+
+               // Name Tag
+               Positioned(
+                  bottom: 0,
+                  child: Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                     decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.white24)
+                     ),
+                     child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ),
+               )
+            ],
+         );
+       },
      );
   }
 }

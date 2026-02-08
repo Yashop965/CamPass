@@ -44,9 +44,9 @@ class _ParentNotificationsScreenState extends State<ParentNotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.background,
-      body: Consumer<ParentProvider>(
+    return Container(
+      color: Colors.transparent, // Allow parent gradient to show
+      child: Consumer<ParentProvider>(
         builder: (context, provider, _) {
           // Derive notifications
           List<Map<String, dynamic>> notifications = [];
@@ -83,9 +83,16 @@ class _ParentNotificationsScreenState extends State<ParentNotificationsScreen> {
                 title = "Child Active";
                 body = "Child has left the campus.";
                 type = "warning";
-             } else if (p.status == 'completed' || p.status == 'expired') {
+             } else if (p.status == 'entered') {
+                bool isLate = p.entryTime != null && p.entryTime!.isAfter(p.validTo);
+                title = isLate ? "LATE ENTRY" : "Child Returned";
+                body = isLate 
+                  ? "Child entered campus late after pass expiry."
+                  : "Child has safely returned to campus.";
+                type = isLate ? "error" : "success";
+             } else if (p.status == 'expired' || p.status == 'completed') {
                 title = "Pass Ended";
-                body = "Child returned or pass expired.";
+                body = "The outing pass has expired or was completed.";
                 type = "info";
              }
 
@@ -110,12 +117,12 @@ class _ParentNotificationsScreenState extends State<ParentNotificationsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                          const Text("NOTIFICATIONS", style: TextStyle(color: AppTheme.primary, letterSpacing: 2, fontWeight: FontWeight.bold)),
-                         TextButton(
-                            onPressed: () {
-                               // Mark all read logic would go here
-                            }, 
-                            child: const Text("Refesh", style: TextStyle(color: AppTheme.textGrey))
-                         )
+                          TextButton(
+                             onPressed: () {
+                                // Mark all read logic would go here
+                             }, 
+                             child: const Text("Refresh", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600))
+                          )
                       ],
                    ),
                 ),

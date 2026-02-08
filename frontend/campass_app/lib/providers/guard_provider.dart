@@ -36,15 +36,16 @@ class GuardProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         if (jsonData is Map) {
-          // Fix: Extract 'pass' object from response: { message: "Pass valid", pass: {...} }
+          // Fix: Extract 'pass' object from response: { message: "...", pass: {...}, scanType: "..." }
           final passData = jsonData['pass'];
+          final scanType = jsonData['scanType'];
+          
           if (passData != null) {
               _lastScannedPass = PassModel.fromJson(Map<String, dynamic>.from(passData));
           } else {
-             // Fallback if 'pass' key is missing but root is pass (unlikely given controller)
              _lastScannedPass = PassModel.fromJson(Map<String, dynamic>.from(jsonData)); 
           }
-          _scanMessage = 'Pass verified ✓';
+          _scanMessage = 'Student ${scanType == 'exit' ? 'Exited' : 'Entered'} ✓';
           
           // Add to history
           _scannedHistory.insert(
@@ -54,6 +55,8 @@ class GuardProvider extends ChangeNotifier {
               'status': 'verified',
               'timestamp': DateTime.now(),
               'passType': _lastScannedPass!.type,
+              'studentName': _lastScannedPass!.studentName,
+              'scanType': scanType,
             },
           );
         }

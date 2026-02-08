@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../services/session_manager.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/constants/app_colors.dart';
+import 'dart:ui';
 
 class RoleSelectScreen extends StatefulWidget {
   const RoleSelectScreen({super.key});
@@ -69,7 +71,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+            colors: [AppColors.primary, AppColors.primaryLight],
           ),
         ),
         child: SafeArea(
@@ -113,74 +115,84 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                       final role = _roles[index];
                       final isSelected = _selectedRole == role['value'];
 
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        elevation: isSelected ? 8 : 2,
-                        shape: RoundedRectangleBorder(
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
-                          side: BorderSide(
-                            color: isSelected ? Colors.white : Colors.transparent,
-                            width: 2,
-                          ),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectedRole = role['value'];
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? Theme.of(context).primaryColor.withOpacity(0.1)
-                                        : AppTheme.surface.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Icon(
-                                    role['icon'],
-                                    size: 32,
-                                    color: isSelected
-                                        ? Theme.of(context).primaryColor
-                                        : Colors.white70,
-                                  ),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isSelected 
+                                    ? Colors.white 
+                                    : Colors.white.withOpacity(0.2),
+                                  width: 1.5,
                                 ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedRole = role['value'];
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(16),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        role['name'],
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                          color: isSelected ? Theme.of(context).primaryColor : Colors.white,
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? AppColors.primary
+                                              : Colors.white.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Icon(
+                                          role['icon'],
+                                          size: 32,
+                                          color: isSelected
+                                              ? Colors.white
+                                              : Colors.white,
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        role['description'],
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white70,
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              role['name'],
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              role['description'],
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white.withOpacity(0.8), // 4.5:1 contrast check
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
+                                      if (isSelected)
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: AppColors.systemGreen,
+                                          size: 28,
+                                        ),
                                     ],
                                   ),
                                 ),
-                                if (isSelected)
-                                  Icon(
-                                    Icons.check_circle,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 28,
-                                  ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
@@ -202,12 +214,12 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                             );
                           }
                         : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF1E3A8A),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       elevation: 4,
                     ),
                     child: const Text(

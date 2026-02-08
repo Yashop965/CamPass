@@ -14,7 +14,7 @@ class LocationProvider extends ChangeNotifier {
   bool _isOutsideGeofence = false;
   Stream<Position>? _positionStream;
 
-  Stream<Position>? _positionStream;
+
 
   // Campus geofence parameters from MapConstants
 

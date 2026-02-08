@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../widgets/gradient_background.dart';
 import '../../widgets/glassy_card.dart';
 import 'package:intl/intl.dart';
 import '../../utils/api_client.dart';
@@ -95,8 +96,8 @@ class _StudentNotificationsScreenState extends State<StudentNotificationsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
-       appBar: AppBar(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
         title: const Text("NOTIFICATIONS", style: TextStyle(color: Colors.white, letterSpacing: 2, fontSize: 16)),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -106,12 +107,13 @@ class _StudentNotificationsScreenState extends State<StudentNotificationsScreen>
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: _isLoading 
-          ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
+      body: GradientBackground(
+        child: _isLoading 
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : _notifications.isEmpty
              ? const Center(child: Text("No notifications", style: TextStyle(color: AppTheme.textGrey)))
              : ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.fromLTRB(24, 100, 24, 16), // Adjust padding for AppBar
                 itemCount: _notifications.length,
                 itemBuilder: (context, index) {
                    final notif = _notifications[index];
@@ -178,7 +180,8 @@ class _StudentNotificationsScreenState extends State<StudentNotificationsScreen>
                       ),
                    );
                 },
-             ),
+          ),
+      ),
     );
   }
 }

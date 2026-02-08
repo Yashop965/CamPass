@@ -2,6 +2,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'dart:ui';
+import '../../core/theme/app_theme.dart';
+import '../../widgets/gradient_background.dart';
+import '../../widgets/glassy_card.dart';
 import '../../services/session_manager.dart';
 import '../../services/auth_service.dart';
 
@@ -53,22 +57,45 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
   Future<void> _logout() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+      builder: (context) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: AlertDialog(
+          backgroundColor: AppTheme.surface.withOpacity(0.95),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.white.withOpacity(0.2)),
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+          title: const Text('Logout', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          content: const Text('Are you sure you want to logout?', style: TextStyle(color: AppTheme.textGrey)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.textGrey,
+              ),
+              child: const Text('Cancel'),
             ),
-            child: const Text('Logout'),
-          ),
-        ],
+            Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.error, Color(0xFFFF6B6B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Logout', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
 
@@ -83,8 +110,12 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Guard Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.transparent,
+        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -93,35 +124,60 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+      body: GradientBackground(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
+            : SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 120, 16, 16),
               child: Column(
                 children: [
                   // Profile Picture Section
                   Center(
                     child: Stack(
                       children: [
-                        const CircleAvatar(
-                          radius: 60,
-                          child: Icon(Icons.badge, size: 60),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppTheme.primary.withOpacity(0.3), width: 3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primary.withOpacity(0.3),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: const CircleAvatar(
+                            radius: 60,
+                            backgroundColor: AppTheme.surface,
+                            child: Icon(Icons.badge, size: 60, color: AppTheme.primary),
+                          ),
                         ),
                         Positioned(
                           bottom: 0,
                           right: 0,
-                          child: CircleAvatar(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            radius: 20,
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 20,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [AppTheme.primary, AppTheme.accent],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              onPressed: () {
-                                _showSnackBar('Profile picture change coming soon');
-                              },
+                            ),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              radius: 20,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  _showSnackBar('Profile picture change coming soon');
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -131,11 +187,7 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
                   const SizedBox(height: 24),
 
                   // User Information Card
-                  Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                  GlassyCard(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
@@ -143,16 +195,30 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
                         children: [
                           Text(
                             _userData?['name'] ?? 'N/A',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            style: const TextStyle(
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            _userData?['role'] ?? 'N/A',
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.w500,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppTheme.primary, AppTheme.accent],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              (_userData?['role'] ?? 'N/A').toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -168,50 +234,47 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
                   const SizedBox(height: 24),
 
                   // Action Buttons
-                  Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                  GlassyCard(
                     child: Column(
                       children: [
                         ListTile(
-                          leading: const Icon(Icons.lock),
-                          title: const Text('Change Password'),
-                          subtitle: const Text('Update your account password'),
-                          trailing: const Icon(Icons.arrow_forward_ios),
+                          leading: const Icon(Icons.lock, color: AppTheme.primary),
+                          title: const Text('Change Password', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                          subtitle: const Text('Update your account password', style: TextStyle(color: AppTheme.textGrey, fontSize: 12)),
+                          trailing: const Icon(Icons.arrow_forward_ios, color: AppTheme.textGrey, size: 16),
                           onTap: () => Navigator.pushNamed(context, '/guard/settings'),
                         ),
-                        const Divider(),
+                        Divider(color: Colors.white.withOpacity(0.1), height: 1),
                         ListTile(
-                          leading: const Icon(Icons.settings),
-                          title: const Text('Settings'),
-                          subtitle: const Text('App preferences and configuration'),
-                          trailing: const Icon(Icons.arrow_forward_ios),
+                          leading: const Icon(Icons.settings, color: AppTheme.primary),
+                          title: const Text('Settings', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                          subtitle: const Text('App preferences and configuration', style: TextStyle(color: AppTheme.textGrey, fontSize: 12)),
+                          trailing: const Icon(Icons.arrow_forward_ios, color: AppTheme.textGrey, size: 16),
                           onTap: () => Navigator.pushNamed(context, '/guard/settings'),
                         ),
-                        const Divider(),
+                        Divider(color: Colors.white.withOpacity(0.1), height: 1),
                         ListTile(
-                          leading: const Icon(Icons.logout, color: Colors.red),
+                          leading: const Icon(Icons.logout, color: AppTheme.error),
                           title: const Text(
                             'Logout',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.w500),
                           ),
-                          subtitle: const Text('Sign out of your account'),
+                          subtitle: const Text('Sign out of your account', style: TextStyle(color: AppTheme.textGrey, fontSize: 12)),
                           onTap: _logout,
                         ),
                       ],
                     ),
                   ),
                 ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
   Widget _buildInfoRow(String label, String? value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -221,7 +284,8 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
               '$label:',
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
-                color: Colors.grey,
+                color: AppTheme.textGrey,
+                fontSize: 14,
               ),
             ),
           ),
@@ -230,6 +294,8 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
               value ?? 'N/A',
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 14,
               ),
             ),
           ),

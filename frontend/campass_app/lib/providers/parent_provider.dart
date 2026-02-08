@@ -316,6 +316,29 @@ class ParentProvider extends ChangeNotifier {
     }
   }
 
+  /// Request instant location update
+  Future<void> requestInstantUpdate(String childId, String token) async {
+    _isLoading = true;
+    notifyListeners();
+    
+    try {
+      // 1. Trigger Request
+      await _apiClient.post('/api/location/request-update', {'studentId': childId});
+      
+      // 2. Wait for student device to respond (mock delay for UX)
+      await Future.delayed(const Duration(seconds: 4));
+      
+      // 3. Fetch latest data
+      await _getChildLocation(childId, token);
+    } catch (e) {
+      print("Error requesting location: $e");
+      _errorMessage = "Failed to request location";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// Clear error message
   void clearError() {
     _errorMessage = null;

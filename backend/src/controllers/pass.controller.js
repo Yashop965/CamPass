@@ -91,13 +91,13 @@ module.exports = {
       const pass = await Pass.findOne({
         where: { barcode },
         include: [
-          { model: User, as: "user", attributes: ["id", "name", "email"] },
+          { model: User, as: "user", attributes: ["id", "name", "email", "parentId"] },
         ],
       });
       if (!pass) return res.status(404).json({ message: "Pass not found" });
 
       // 'approved_parent' is an intermediate state and not valid for exit
-      const validStatuses = ['active', 'approved', 'approved_warden'];
+      const validStatuses = ['active', 'approved', 'approved_warden', 'exited'];
       if (!validStatuses.includes(pass.status))
         return res.status(400).json({ message: `Pass status: ${pass.status}` });
 
@@ -108,13 +108,71 @@ module.exports = {
         return res
           .status(400)
           .json({ message: "Pass not yet valid", validFrom: pass.validFrom });
-      if (new Date(pass.validTo) < now)
+
+      // Expiry check: Only block EXIT scan if pass is expired.
+      // Entry scan (re-entry) should be allowed even if expired (Late Entry).
+      if (new Date(pass.validTo) < now && !pass.exitTime)
         return res
           .status(400)
           .json({ message: "Pass expired", validTo: pass.validTo });
 
       // success
-      return res.json({ message: "Pass valid", pass });
+      // Logic for Exited/Entered toggle
+      now.setTime(new Date().getTime()); // Update 'now' to current time for logic
+      let scanType = '';
+
+      if (!pass.exitTime) {
+        // First scan: Marking Exit
+        pass.exitTime = now;
+        pass.status = 'exited';
+        scanType = 'exit';
+        await pass.save();
+      } else if (!pass.entryTime) {
+        // Second scan: Marking Entry
+        pass.entryTime = now;
+        pass.status = 'entered';
+        scanType = 'entry';
+        await pass.save();
+
+        // Check if Late Entry
+        if (now > new Date(pass.validTo)) {
+          const { sendToTopic } = require('../config/firebase');
+          // Format time for India (UTC+5:30) for the notification message
+          const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+          const formattedTime = istTime.toISOString().substring(11, 16);
+
+          const lateNotif = {
+            title: '🚨 LATE ENTRY ALERT',
+            body: `Student ${pass.user.name} LATE ENTRY at ${formattedTime}.`
+          };
+          const lateData = {
+            type: 'late_entry',
+            passId: pass.id,
+            studentId: pass.userId,
+            studentName: pass.user.name,
+            entryTime: now.toISOString(),
+            validUntil: pass.validTo.toISOString()
+          };
+          // Notify Wardens
+          await sendToTopic('warden_alerts', lateNotif, lateData).catch(console.error);
+
+          // Notify Parent if linked
+          if (pass.user.parentId) {
+            await sendToTopic(`parent_${pass.user.parentId}_alerts`, lateNotif, lateData).catch(console.error);
+          }
+        }
+      } else {
+        return res.status(400).json({ message: "Pass already used for entry" });
+      }
+
+      const passData = pass.toJSON();
+      passData.studentName = pass.user?.name || null;
+
+      return res.json({
+        message: `Student ${scanType === 'exit' ? 'Exited' : 'Entered'}`,
+        scanType,
+        pass: passData
+      });
     } catch (err) {
       console.error("scanPass error", err);
       res.status(500).json({ message: "Server error" });
@@ -243,7 +301,15 @@ module.exports = {
         ],
         order: [['createdAt', 'DESC']],
       });
-      res.json(passes);
+
+      // Map to include studentName at top level for frontend
+      const mappedPasses = passes.map(p => {
+        const passData = p.toJSON();
+        passData.studentName = passData.user?.name || null;
+        return passData;
+      });
+
+      res.json(mappedPasses);
     } catch (err) {
       console.error('getPendingWardenPasses error', err);
       res.status(500).json({ message: 'Server error' });
@@ -299,7 +365,24 @@ module.exports = {
         order: [['updatedAt', 'DESC']],
         limit: 100 // Limit history to last 100 entries for performance
       });
-      res.json(passes);
+
+
+      // Map to include studentName at top level for frontend
+
+      const mappedPasses = passes.map(p => {
+
+        const passData = p.toJSON();
+
+        passData.studentName = passData.user?.name || null;
+
+        return passData;
+
+      });
+
+
+
+      res.json(mappedPasses);
+
     } catch (err) {
       console.error('getWardenPassHistory error', err);
       res.status(500).json({ message: 'Server error' });

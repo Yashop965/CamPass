@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import '../../widgets/gradient_background.dart';
 import '../../models/user_model.dart';
 import '../../utils/error_handler.dart';
 import '../../utils/validators.dart';
@@ -299,8 +300,12 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -309,10 +314,11 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+      body: GradientBackground(
+        child: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 100, 16, 16), // Adjust padding for AppBar
               child: Column(
                 children: [
                   // Profile Picture Section
@@ -422,6 +428,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ],
               ),
             ),
+      ),
     );
   }
 

@@ -8,9 +8,12 @@ class PassModel {
   final String status;
   final String? studentName;
   final String? purpose;
+  final String? rejectionReason;
   final String? barcodeImagePath;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? exitTime;
+  final DateTime? entryTime;
 
   PassModel({
     required this.id,
@@ -22,9 +25,12 @@ class PassModel {
     required this.status,
     this.studentName,
     this.purpose,
+    this.rejectionReason,
     this.barcodeImagePath,
     this.createdAt,
     this.updatedAt,
+    this.exitTime,
+    this.entryTime,
   });
 
   factory PassModel.fromJson(Map<String, dynamic> json) => PassModel(
@@ -37,9 +43,12 @@ class PassModel {
     status: json['status'],
     studentName: json['studentName'],
     purpose: json['purpose'],
+    rejectionReason: json['rejectionReason'],
     barcodeImagePath: json['barcodeImagePath'],
     createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
     updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+    exitTime: json['exitTime'] != null ? DateTime.parse(json['exitTime']) : null,
+    entryTime: json['entryTime'] != null ? DateTime.parse(json['entryTime']) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -52,8 +61,11 @@ class PassModel {
     'status': status,
     'studentName': studentName,
     'purpose': purpose,
+    'rejectionReason': rejectionReason,
     'barcodeImagePath': barcodeImagePath,
     'createdAt': createdAt?.toIso8601String(),
     'updatedAt': updatedAt?.toIso8601String(),
+    'exitTime': exitTime?.toIso8601String(),
+    'entryTime': entryTime?.toIso8601String(),
   };
 }

@@ -17,7 +17,7 @@ class AppConfig {
       default:
         // For development, use 10.0.2.2 for Android Emulator, or localhost for iOS/Web
         // If testing on a physical device, change this to your computer's IP
-        return 'http://10.106.20.187:5000';
+        return 'http://192.168.1.197:5000';
     }
   }
 

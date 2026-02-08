@@ -18,8 +18,11 @@ class AuthService {
     if (res.statusCode == 201 || res.statusCode == 200) {
       final data = jsonDecode(res.body);
       return data;
+      return data;
+    } else {
+      final data = jsonDecode(res.body);
+      throw Exception(data['message'] ?? 'Registration failed');
     }
-    return null;
   }
 
   Future<UserModel?> login(String email, String password) async {

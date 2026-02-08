@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../widgets/glassy_card.dart';
 import '../../widgets/gradient_button.dart';
+import '../../widgets/gradient_background.dart';
 import '../../services/auth_service.dart';
 import '../../services/session_manager.dart';
 
@@ -51,15 +52,19 @@ class _WardenProfileScreenState extends State<WardenProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Profile', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: _isLoading 
-          ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
-          : SingleChildScrollView(
+      body: GradientBackground(
+        child: SafeArea(
+          child: _isLoading 
+            ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
+            : SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -121,6 +126,8 @@ class _WardenProfileScreenState extends State<WardenProfileScreen> {
                },
             )
           ],
+        ),
+      ),
         ),
       ),
     );

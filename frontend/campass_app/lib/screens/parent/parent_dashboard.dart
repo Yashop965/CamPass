@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:ui';
 import '../../core/theme/app_theme.dart';
 import '../../widgets/glassy_card.dart';
+import '../../widgets/gradient_background.dart';
 import '../../providers/parent_provider.dart';
 import '../common/review_request_screen.dart';
 import 'parent_tracking_screen.dart';
@@ -28,7 +29,8 @@ class ParentDashboard extends StatefulWidget {
 
 class _ParentDashboardState extends State<ParentDashboard> with TickerProviderStateMixin, WidgetsBindingObserver {
   int _selectedIndex = 0;
-  String? _selectedChildId;
+  String? _selectedChildId; // For Tracking & History tabs
+  String? _approvalFilterId; // For Approvals tab filtering
   Timer? _pollTimer;
   
   @override
@@ -111,7 +113,17 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
              );
              _refreshData();
            }
-         } else if (message.data['type'] == 'sos_alert') {
+          } else if (message.data['type'] == 'late_entry') {
+             if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                   SnackBar(
+                      content: Text("LATE ENTRY! ${message.notification?.body ?? ''}"),
+                      backgroundColor: AppTheme.error,
+                      duration: const Duration(seconds: 10),
+                   )
+                );
+             }
+          } else if (message.data['type'] == 'sos_alert') {
             if (mounted) {
                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -140,66 +152,111 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
 
   void _showLinkStudentDialog() {
     final emailController = TextEditingController();
-    showDialog(
+    
+    showModalBottomSheet(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: const Text("Link Student", style: TextStyle(color: Colors.white)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Enter your child's student email to link their account.", style: TextStyle(color: Colors.white70)),
-            const SizedBox(height: 16),
-            TextField(
-              controller: emailController,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                hintText: "student@example.com",
-                hintStyle: TextStyle(color: Colors.white24),
-                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
-              ),
-            ),
-          ],
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          padding: EdgeInsets.only(
+             bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+             top: 24, left: 24, right: 24
+          ),
+          decoration: BoxDecoration(
+             color: const Color(0xFF1E1E1E).withOpacity(0.9),
+             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+             border: Border.all(color: Colors.white10)
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)))),
+               const SizedBox(height: 24),
+               const Text("Link Student Account", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+               const SizedBox(height: 8),
+               const Text("Enter your child's student email to link their account to your dashboard.", style: TextStyle(color: Colors.white54)),
+               const SizedBox(height: 24),
+               
+               // Email Input
+               Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  decoration: BoxDecoration(
+                     color: Colors.white.withOpacity(0.05),
+                     borderRadius: BorderRadius.circular(16),
+                     border: Border.all(color: Colors.white10)
+                  ),
+                  child: TextField(
+                     controller: emailController,
+                     style: const TextStyle(color: Colors.white),
+                     decoration: const InputDecoration(
+                        icon: Icon(Icons.email_outlined, color: AppTheme.primary),
+                        hintText: "student@university.edu",
+                        hintStyle: TextStyle(color: Colors.white24),
+                        border: InputBorder.none,
+                     ),
+                  ),
+               ),
+               const SizedBox(height: 32),
+               
+               // Action Buttons
+               Row(
+                 children: [
+                    Expanded(
+                       child: TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                          child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+                       ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                       child: ElevatedButton(
+                          onPressed: () async {
+                            final email = emailController.text.trim();
+                            if (email.isEmpty) return;
+                            
+                            Navigator.pop(ctx); 
+                            
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Linking account..."), duration: Duration(seconds: 1)),
+                            );
+                            
+                            try {
+                              final authService = AuthService();
+                              await authService.linkStudent(email, widget.token); 
+                              
+                              if (mounted) {
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("Success! Student linked."), backgroundColor: AppTheme.success),
+                                 );
+                                 _refreshData();
+                                 _loadChildren();
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Error: $e"), backgroundColor: AppTheme.error),
+                                 );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                             backgroundColor: AppTheme.primary,
+                             foregroundColor: Colors.black,
+                             padding: const EdgeInsets.symmetric(vertical: 16),
+                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))
+                          ),
+                          child: const Text("Link Account", style: TextStyle(fontWeight: FontWeight.bold)),
+                       ),
+                    ),
+                 ],
+               )
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("CANCEL"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final email = emailController.text.trim();
-              if (email.isEmpty) return;
-              
-              Navigator.pop(ctx); // Close dialog
-              
-              // Show loading
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Linking account..."), duration: Duration(seconds: 1)),
-              );
-              
-              try {
-                final authService = AuthService();
-                await authService.linkStudent(email, widget.token); 
-                
-                if (mounted) {
-                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Success! Student linked."), backgroundColor: AppTheme.success),
-                   );
-                   _refreshData();
-                   _loadChildren();
-                }
-              } catch (e) {
-                if (mounted) {
-                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Error: $e"), backgroundColor: AppTheme.error),
-                   );
-                }
-              }
-            },
-            child: const Text("LINK"),
-          ),
-        ],
       ),
     );
   }
@@ -208,24 +265,27 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
-      body: Stack(
-        children: [
-            // Background Orbs
-           Positioned(
-             top: -100,
-             right: -50,
-             child: Container(
-               width: 300,
-               height: 300,
-               decoration: BoxDecoration(
-                 shape: BoxShape.circle,
-                 color: AppTheme.primary.withOpacity(0.1),
-                 boxShadow: [
-                   BoxShadow(color: AppTheme.primary.withOpacity(0.2), blurRadius: 100, spreadRadius: 20)
-                 ]
+      extendBodyBehindAppBar: true,
+      body: GradientBackground(
+        child: Stack(
+          children: [
+              // Keep Orbs if they look good, or remove / update them
+              // Updated Orb
+             Positioned(
+               top: -100,
+               right: -50,
+               child: Container(
+                 width: 300,
+                 height: 300,
+                 decoration: BoxDecoration(
+                   shape: BoxShape.circle,
+                   color: Colors.white.withOpacity(0.05), // Subtle white instead of primary
+                   boxShadow: [
+                     BoxShadow(color: Colors.white.withOpacity(0.1), blurRadius: 100, spreadRadius: 20)
+                   ]
+                 ),
                ),
              ),
-           ),
            
            SafeArea(
              bottom: false,
@@ -300,6 +360,7 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
              ),
            ),
         ],
+        ),
       ),
       extendBody: true,
       bottomNavigationBar: _buildGlassBottomNav(),
@@ -371,19 +432,22 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
                Padding(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
                   child: Container(
-                     padding: const EdgeInsets.symmetric(horizontal: 16),
+                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                      decoration: BoxDecoration(
-                        color: AppTheme.surface,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white10)
+                        color: Colors.white.withOpacity(0.05), // Glassy
+                        borderRadius: BorderRadius.circular(20), // More rounded
+                        border: Border.all(color: Colors.white.withOpacity(0.1))
                      ),
                      child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                            value: children.any((c) => c['id'] == parentProvider.childPasses.firstOrNull?.userId) 
                                    ? parentProvider.childPasses.firstOrNull?.userId 
                                    : children.first['id'], // Default to first child
-                           dropdownColor: const Color(0xFF1E1E1E),
+                           dropdownColor: const Color(0xFF2A2A2A).withOpacity(0.95), // Lighter translucent dropdown
+                           borderRadius: BorderRadius.circular(16), // Rounded dropdown corners
+                           icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.primary),
                            isExpanded: true,
+                           style: const TextStyle(color: Colors.white, fontSize: 16),
                            items: children.map((c) => DropdownMenuItem(
                               value: c['id'].toString(),
                               child: Text(c['name'] ?? 'Student', style: const TextStyle(color: Colors.white)),
@@ -492,95 +556,165 @@ class _ParentDashboardState extends State<ParentDashboard> with TickerProviderSt
       builder: (context, parentProvider, _) {
         final pending = parentProvider.pendingApprovals;
 
-        if (pending.isEmpty) {
-          // Even if empty, wrap in RefreshIndicator so user can pull to refresh manually
-          return RefreshIndicator(
-            color: AppTheme.primary,
-            backgroundColor: AppTheme.surface,
-            onRefresh: () async => _refreshData(),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.6,
-                alignment: Alignment.center,
-                child: Column(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: [
-                      Icon(Icons.check_circle_outline, size: 80, color: AppTheme.success.withOpacity(0.5)),
-                      const SizedBox(height: 16),
-                      const Text("All Caught Up!", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      const Text("No pending approval requests.", style: TextStyle(color: AppTheme.textGrey)),
-                   ],
-                ),
-              ),
-            ),
-          );
-        }
+        // Filter Logic
+        final filteredPending = _approvalFilterId == null 
+             ? pending 
+             : pending.where((p) => p.userId == _approvalFilterId).toList();
+        
+        final children = parentProvider.children;
 
-        return RefreshIndicator(
-          color: AppTheme.primary,
-          backgroundColor: AppTheme.surface,
-          onRefresh: () async => _refreshData(),
-          child: ListView.builder(
-            padding: const EdgeInsets.all(24),
-            itemCount: pending.length,
-            itemBuilder: (context, index) {
-              final p = pending[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: GlassyCard(
-                   onTap: () {
-                      Navigator.push(
-                         context, 
-                         MaterialPageRoute(
-                            builder: (_) => ReviewRequestScreen(
-                                pass: p, 
-                                reviewerId: widget.parentId, 
-                                token: widget.token,
-                                isWarden: false,
-                             )
-                         )
-                      ).then((_) => _refreshData());
-                   },
-                   child: Row(
-                      children: [
-                         Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                               color: AppTheme.primary.withOpacity(0.1),
-                               borderRadius: BorderRadius.circular(12),
-                               border: Border.all(color: AppTheme.primary.withOpacity(0.3))
-                            ),
-                            child: Icon(
-                               p.type == 'outing' ? Icons.directions_walk : Icons.home,
-                               color: AppTheme.primary,
-                            ),
-                         ),
-                         const SizedBox(width: 16),
-                         Expanded(
-                            child: Column(
-                               crossAxisAlignment: CrossAxisAlignment.start,
-                               children: [
-                                  Text(
-                                     p.type.toUpperCase(),
-                                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                     "Requested: ${DateFormat('MMM dd, hh:mm a').format(p.validFrom)}",
-                                     style: const TextStyle(color: AppTheme.textGrey, fontSize: 12),
-                                  ),
-                               ],
-                            ),
-                         ),
-                         const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.textGrey)
-                      ],
-                   ),
+        return Column(
+          children: [
+             // APPROVAL FILTER (Only show if there are children linked)
+             if (children.isNotEmpty)
+               Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                  child: SingleChildScrollView(
+                     scrollDirection: Axis.horizontal,
+                     child: Row(
+                        children: [
+                           // "All" Chip
+                           ChoiceChip(
+                              label: const Text("All Students"),
+                              selected: _approvalFilterId == null,
+                              onSelected: (bool selected) {
+                                 if (selected) setState(() => _approvalFilterId = null);
+                              },
+                              selectedColor: AppTheme.primary,
+                              labelStyle: TextStyle(color: _approvalFilterId == null ? Colors.black : Colors.white),
+                              backgroundColor: AppTheme.surface,
+                              side: BorderSide.none,
+                           ),
+                           const SizedBox(width: 8),
+                           // Child Chips
+                           ...children.map((child) => Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: ChoiceChip(
+                                 label: Text(child['name'] ?? 'Student'),
+                                 selected: _approvalFilterId == child['id'],
+                                 onSelected: (bool selected) {
+                                    setState(() => _approvalFilterId = selected ? child['id'] : null);
+                                 },
+                                 selectedColor: AppTheme.primary,
+                                 labelStyle: TextStyle(color: _approvalFilterId == child['id'] ? Colors.black : Colors.white),
+                                 backgroundColor: AppTheme.surface,
+                                 side: BorderSide.none,
+                              ),
+                           )),
+                        ],
+                     ),
+                  ),
+               ),
+
+             if (filteredPending.isEmpty)
+                Expanded(
+                  child: RefreshIndicator(
+                    color: AppTheme.primary,
+                    backgroundColor: AppTheme.surface,
+                    onRefresh: () async => _refreshData(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        alignment: Alignment.center,
+                        child: Column(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: [
+                              Icon(Icons.check_circle_outline, size: 80, color: AppTheme.success.withOpacity(0.5)),
+                              const SizedBox(height: 16),
+                              Text(
+                                 _approvalFilterId == null ? "All Caught Up!" : "No requests for this student",
+                                 style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)
+                              ),
+                              const SizedBox(height: 8),
+                              const Text("No pending approval requests.", style: TextStyle(color: AppTheme.textGrey)),
+                           ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+             else 
+                Expanded(
+                  child: RefreshIndicator(
+                    color: AppTheme.primary,
+                    backgroundColor: AppTheme.surface,
+                    onRefresh: () async => _refreshData(),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      itemCount: filteredPending.length,
+                      itemBuilder: (context, index) {
+                        final p = filteredPending[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: GlassyCard(
+                             // ... rest of card code ...
+                             child: InkWell( // Wrap content in InkWell for tap effect if needed or just keep GlassyCard tap
+                               onTap: () {
+                                  Navigator.push(
+                                     context, 
+                                     MaterialPageRoute(
+                                        builder: (_) => ReviewRequestScreen(
+                                            pass: p, 
+                                            reviewerId: widget.parentId, 
+                                            token: widget.token,
+                                            isWarden: false,
+                                         )
+                                     )
+                                  ).then((_) => _refreshData());
+                               },
+                               child: Padding( // Add padding inside card
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    children: [
+                                       Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                             color: AppTheme.primary.withOpacity(0.1),
+                                             borderRadius: BorderRadius.circular(12),
+                                             border: Border.all(color: AppTheme.primary.withOpacity(0.3))
+                                          ),
+                                          child: Icon(
+                                             p.type == 'outing' ? Icons.directions_walk : Icons.home,
+                                             color: AppTheme.primary,
+                                          ),
+                                       ),
+                                       const SizedBox(width: 16),
+                                       Expanded(
+                                          child: Column(
+                                             crossAxisAlignment: CrossAxisAlignment.start,
+                                             children: [
+                                                Text(
+                                                   p.type.toUpperCase(),
+                                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                   "Requested: ${DateFormat('MMM dd, hh:mm a').format(p.validFrom)}",
+                                                   style: const TextStyle(color: AppTheme.textGrey, fontSize: 12),
+                                                ),
+                                                if (p.studentName != null) ...[
+                                                   const SizedBox(height: 4),
+                                                   Text(
+                                                      "By: ${p.studentName}",
+                                                      style: const TextStyle(color: AppTheme.secondary, fontSize: 12, fontWeight: FontWeight.w600),
+                                                   ),
+                                                ]
+                                             ],
+                                          ),
+                                       ),
+                                       const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.textGrey)
+                                    ],
+                                 ),
+                               ),
+                             ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              );
-            },
-          ),
+          ],
         );
       },
     );

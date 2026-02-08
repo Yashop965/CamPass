@@ -121,11 +121,9 @@ module.exports = {
   // Get students currently outside geofence
   async getGeofenceViolations(req, res) {
     try {
-      // Get all students with geofence violations in the last check
+      // Get all students with geofence violations
       const violations = await Location.findAll({
         where: { isGeofenceViolation: true },
-        attributes: ["studentId"],
-        group: ["studentId"],
         include: [
           {
             model: User,
@@ -136,12 +134,52 @@ module.exports = {
         order: [["timestamp", "DESC"]],
       });
 
-      res.json(violations);
+      // Get unique students (most recent violation for each)
+      const uniqueViolations = [];
+      const seenStudents = new Set();
+
+      for (const violation of violations) {
+        const studentId = violation.studentId;
+        if (!seenStudents.has(studentId)) {
+          seenStudents.add(studentId);
+
+          // Get the student's most recent active pass
+          const Pass = require("../models").Pass;
+          const latestPass = await Pass.findOne({
+            where: {
+              userId: studentId,
+              status: { [require("sequelize").Op.in]: ["approved_parent", "approved_warden", "active"] }
+            },
+            order: [["validFrom", "DESC"]],
+            attributes: ["id", "type", "purpose", "validFrom", "validTo", "status"],
+          });
+
+          uniqueViolations.push({
+            id: violation.id,
+            studentId: violation.studentId,
+            studentName: violation.student?.name || "Unknown",
+            timestamp: violation.timestamp,
+            latitude: violation.latitude,
+            longitude: violation.longitude,
+            latestPass: latestPass ? {
+              id: latestPass.id,
+              type: latestPass.type,
+              purpose: latestPass.purpose,
+              validFrom: latestPass.validFrom,
+              validTo: latestPass.validTo,
+              status: latestPass.status,
+            } : null,
+          });
+        }
+      }
+
+      res.json(uniqueViolations);
     } catch (err) {
       console.error("getGeofenceViolations error", err);
       res.status(500).json({ message: "Server error" });
     }
   },
+
 
   // Request an immediate location update from a student
   async requestUpdate(req, res) {

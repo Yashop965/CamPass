@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../widgets/gradient_background.dart';
 import '../../widgets/glassy_card.dart';
 import '../../services/session_manager.dart';
 import 'create_pass_screen.dart';
@@ -18,6 +19,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../core/config/app_config.dart';
 import '../../core/constants/map_constants.dart';
+import '../../core/constants/app_colors.dart';
+import '../../utils/shake_detector.dart';
 
 class StudentDashboard extends StatefulWidget {
   final String? userId;
@@ -41,10 +44,23 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
 
     _loadData();
     _setupNotifications();
+    _setupShakeDetection(); // Start listening for shakes
+    
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
+  }
+
+  void _setupShakeDetection() {
+    ShakeDetector().detectShake().listen((shaked) {
+      if (shaked && mounted) {
+        // Only navigate if StudentDashboard is currently visible
+        if (ModalRoute.of(context)?.isCurrent ?? false) {
+          _navigateTo(SOSScreen(userId: _userId, token: _token ?? ''));
+        }
+      }
+    });
   }
 
   void _setupNotifications() {
@@ -161,110 +177,145 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
-      body: Stack(
-        children: [
-           // Background Elements
-           Positioned(
-             top: -100,
-             right: -50,
-             child: Container(
-               width: 300,
-               height: 300,
-               decoration: BoxDecoration(
-                 shape: BoxShape.circle,
-                 color: AppTheme.primary.withOpacity(0.1),
-                 boxShadow: [
-                   BoxShadow(color: AppTheme.primary.withOpacity(0.2), blurRadius: 100, spreadRadius: 20)
-                 ]
+      extendBodyBehindAppBar: true,
+      body: GradientBackground(
+        child: Stack(
+          children: [
+             // Background Elements
+             Positioned(
+               top: -100,
+               right: -50,
+               child: Container(
+                 width: 300,
+                 height: 300,
+                 decoration: BoxDecoration(
+                   shape: BoxShape.circle,
+                   color: Colors.white.withOpacity(0.05),
+                   boxShadow: [
+                     BoxShadow(color: Colors.white.withOpacity(0.05), blurRadius: 100, spreadRadius: 20)
+                   ]
+                 ),
                ),
              ),
-           ),
 
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // App Bar / Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Welcome back,', style: TextStyle(color: AppTheme.textGrey, fontSize: 16)),
-                          Text(_userName, style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      GestureDetector(
-                         onTap: () => _navigateTo(ProfileScreen(userId: widget.userId)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                             shape: BoxShape.circle,
-                             border: Border.all(color: AppTheme.primary),
-                             boxShadow: [BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 10)]
-                          ),
-                          child: const CircleAvatar(
-                            backgroundColor: AppTheme.surface,
-                            child: Icon(Icons.person, color: Colors.white),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 32),
-                  const Text("DASHBOARD", style: TextStyle(color: AppTheme.primary, letterSpacing: 2, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-
-                  // Staggered Grid
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
+          Positioned.fill(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // App Bar / Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildMenuCard(
-                          title: 'New Pass',
-                          icon: Icons.add_circle_outline,
-                          color: AppTheme.primary,
-                          delay: 0,
-                          onTap: () => _navigateTo(CreatePassScreen(userId: _userId ?? '')),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Welcome back,', style: TextStyle(color: AppTheme.textGrey, fontSize: 16)),
+                            Text(_userName, style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                          ],
                         ),
-                        _buildMenuCard(
-                          title: 'My Passes',
-                          icon: Icons.history,
-                          color: AppTheme.secondary,
-                          delay: 100,
-                          onTap: () => _navigateTo(PassHistoryScreen(userId: _userId ?? '', token: _token ?? '')),
-                        ),
-                        _buildMenuCard(
-                          title: 'Notifications',
-                          icon: Icons.notifications_none,
-                          color: Colors.purpleAccent,
-                          delay: 200,
-                          onTap: () => _navigateTo(StudentNotificationsScreen(userId: _userId ?? '', token: _token ?? '')),
-                        ),
-                        _buildMenuCard(
-                          title: 'Show QR',
-                          icon: Icons.qr_code_2,
-                          color: AppTheme.success,
-                          delay: 300,
-                          onTap: () => _navigateTo(const BarcodeDisplayScreen()),
-                        ),
-                        _buildMenuCard(
-                          title: 'Location',
-                          icon: Icons.location_on_outlined,
-                          color: Colors.orangeAccent,
-                          delay: 300,
-                          onTap: () => _navigateTo(LocationTrackingScreen(userId: _userId, token: _token ?? '')),
-                        ),
+                        GestureDetector(
+                           onTap: () => _navigateTo(ProfileScreen(userId: widget.userId)),
+                          child: Container(
+                            decoration: BoxDecoration(
+                               shape: BoxShape.circle,
+                               border: Border.all(color: AppTheme.primary),
+                               boxShadow: [BoxShadow(color: AppTheme.primary.withOpacity(0.3), blurRadius: 10)]
+                            ),
+                            child: const CircleAvatar(
+                              backgroundColor: AppTheme.surface,
+                              child: Icon(Icons.person, color: Colors.white),
+                            ),
+                          ),
+                        )
                       ],
                     ),
-                  ),
-                ],
+                    
+                    const SizedBox(height: 32),
+                    const Text("DASHBOARD", style: TextStyle(color: AppTheme.primary, letterSpacing: 2, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+
+                    // Custom Hierarchy
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // 1. Primary Action: Show QR
+                            _buildMenuCard(
+                              title: 'Show Entry QR',
+                              icon: Icons.qr_code,
+                              color: AppColors.systemGreen,
+                              delay: 0,
+                              height: 140,
+                              onTap: () => _navigateTo(const BarcodeDisplayScreen()),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // 2. Pass Management (Grouped)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildMenuCard(
+                                    title: 'New Pass',
+                                    icon: Icons.add_circle_outline,
+                                    color: AppColors.primary,
+                                    delay: 100,
+                                    height: 120,
+                                    onTap: () => _navigateTo(CreatePassScreen(userId: _userId ?? '')),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildMenuCard(
+                                    title: 'My Passes',
+                                    icon: Icons.history,
+                                    color: AppColors.systemGold, // Gold for Pending/History
+                                    delay: 150,
+                                    height: 120,
+                                    onTap: () => _navigateTo(PassHistoryScreen(userId: _userId ?? '', token: _token ?? '')),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+
+                            // 3. Secondary Actions
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildMenuCard(
+                                    title: 'Alerts',
+                                    icon: Icons.notifications_outlined,
+                                    color: Colors.purpleAccent,
+                                    delay: 200,
+                                    height: 120,
+                                    onTap: () => _navigateTo(StudentNotificationsScreen(userId: _userId ?? '', token: _token ?? '')),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildMenuCard(
+                                    title: 'Location',
+                                    icon: Icons.location_on_outlined,
+                                    color: Colors.orangeAccent,
+                                    delay: 250,
+                                    height: 120,
+                                    onTap: () => _navigateTo(LocationTrackingScreen(userId: _userId, token: _token ?? '')),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 100), // Space for SOS button
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -293,7 +344,7 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
                   );
                 },
                 child: FloatingActionButton.large(
-                  backgroundColor: AppTheme.accent,
+                  backgroundColor: AppColors.systemRed,
                   onPressed: () => _navigateTo(SOSScreen(userId: _userId, token: _token ?? '')),
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -307,6 +358,7 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -317,6 +369,7 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
     required Color color,
     required int delay,
     required VoidCallback onTap,
+    double? height,
   }) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
@@ -333,6 +386,7 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
       },
       child: GlassyCard(
         onTap: onTap,
+        height: height,
         padding: EdgeInsets.zero,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

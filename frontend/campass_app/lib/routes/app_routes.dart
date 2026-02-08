@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/role_select_screen.dart';
+import '../screens/auth/register_screen.dart';
 import '../screens/student/student_dashboard.dart';
 import '../screens/parent/parent_dashboard.dart';
 import '../screens/warden/warden_dashboard.dart';
@@ -20,6 +21,7 @@ class AppRoutes {
   static Map<String, WidgetBuilder> routes = {
     '/': (context) => const RoleSelectScreen(),
     '/login': (context) => const LoginScreen(),
+    '/register': (context) => const RegisterScreen(),
     '/student': (context) {
       final args = ModalRoute.of(context)?.settings.arguments;
       String? userId;

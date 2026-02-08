@@ -12,6 +12,7 @@ class WardenProvider extends ChangeNotifier {
   List<PassModel> _passHistory = [];
   List<dynamic> _allSOSAlerts = [];
   List<dynamic> _geofenceViolations = [];
+  List<dynamic> _lateEntryAlerts = [];
   List<dynamic> _allStudentLocations = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -21,6 +22,7 @@ class WardenProvider extends ChangeNotifier {
   List<PassModel> get passHistory => _passHistory;
   List<dynamic> get allSOSAlerts => _allSOSAlerts;
   List<dynamic> get geofenceViolations => _geofenceViolations;
+  List<dynamic> get lateEntryAlerts => _lateEntryAlerts;
   List<dynamic> get allStudentLocations => _allStudentLocations;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
@@ -203,6 +205,36 @@ class WardenProvider extends ChangeNotifier {
     }
   }
 
+  /// Resolve ALL active SOS alerts
+  Future<void> resolveAllSOS(String token) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Create a copy to iterate
+      final alertsToResolve = List.from(_allSOSAlerts);
+      
+      // Process in parallel or sequence. Parallel is faster.
+      await Future.wait(alertsToResolve.map((alert) async {
+         final id = alert['id'];
+         if (id != null) {
+            await resolveSOSAlert(id, token);
+         }
+      }));
+      
+      // Refresh list to be sure
+      _allSOSAlerts.clear();
+      notifyListeners();
+      
+    } catch (e) {
+      _errorMessage = "Failed to resolve all alerts: $e";
+      print("Error resolving all: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// Get all student locations for monitoring
   Future<void> loadAllStudentLocations(String token) async {
     try {
@@ -234,8 +266,14 @@ class WardenProvider extends ChangeNotifier {
       'pendingApprovals': _pendingApprovals.length,
       'activeSOSAlerts': _allSOSAlerts.length,
       'geofenceViolations': _geofenceViolations.length,
+      'lateEntries': _lateEntryAlerts.length,
       'outOfBoundsStudents': _geofenceViolations.length,
     };
+  }
+
+  void addLateEntryAlert(Map<String, dynamic> data) {
+    _lateEntryAlerts.insert(0, data);
+    notifyListeners();
   }
 
   /// Clear error message

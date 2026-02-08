@@ -5,6 +5,7 @@ import '../../models/pass_model.dart';
 import 'barcode_display_screen.dart';
 import '../../core/theme/app_theme.dart';
 import '../../widgets/glassy_card.dart';
+import '../../widgets/gradient_background.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/custom_error_dialog.dart';
 import 'package:intl/intl.dart';
@@ -115,15 +116,17 @@ class _CreatePassScreenState extends State<CreatePassScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-         title: const Text("Request Outing"),
+         title: const Text("Request Outing", style: TextStyle(color: Colors.white)),
          backgroundColor: Colors.transparent,
          elevation: 0,
          centerTitle: true,
+         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+      body: GradientBackground(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 100, 24, 24),
         child: Column(
           children: [
             const Hero(
@@ -187,6 +190,7 @@ class _CreatePassScreenState extends State<CreatePassScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

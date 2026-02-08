@@ -74,7 +74,7 @@ class _GlassyCardState extends State<GlassyCard> with SingleTickerProviderStateM
           borderRadius: BorderRadius.circular(24), 
           child: widget.enableBlur 
             ? BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), 
+                filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30), 
                 child: _buildCardContent(),
               )
             : _buildCardContent(),
@@ -98,7 +98,7 @@ class _GlassyCardState extends State<GlassyCard> with SingleTickerProviderStateM
           gradient: widget.enableBlur ? AppTheme.glassGradient : null,
           border: Border.all(
             color: Colors.white.withOpacity(0.2), 
-            width: 1,
+            width: 1.5,
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
