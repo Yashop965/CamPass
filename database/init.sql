@@ -1,0 +1,1261 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict ZjS9c2cMve2h22WWEM236zESEQft5X7FjdqiPnCa1Z8yU5dIPRYoiIfsedCyVeV
+
+-- Dumped from database version 15.15
+-- Dumped by pg_dump version 15.15
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_parentId_fkey";
+ALTER TABLE ONLY public."Settings" DROP CONSTRAINT "Settings_userId_fkey";
+ALTER TABLE ONLY public."SOs" DROP CONSTRAINT "SOs_studentId_fkey";
+ALTER TABLE ONLY public."Passes" DROP CONSTRAINT "Passes_userId_fkey";
+ALTER TABLE ONLY public."Locations" DROP CONSTRAINT "Locations_studentId_fkey";
+DROP INDEX public.users_email;
+DROP INDEX public.passes_user_id;
+DROP INDEX public.passes_status;
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_pkey";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key9";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key8";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key77";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key76";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key75";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key74";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key73";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key72";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key71";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key70";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key7";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key69";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key68";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key67";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key66";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key65";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key64";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key63";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key62";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key61";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key60";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key6";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key59";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key58";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key57";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key56";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key55";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key54";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key53";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key52";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key51";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key50";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key5";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key49";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key48";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key47";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key46";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key45";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key44";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key43";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key42";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key41";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key40";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key4";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key39";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key38";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key37";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key36";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key35";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key34";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key33";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key32";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key31";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key30";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key3";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key29";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key28";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key27";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key26";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key25";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key24";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key23";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key22";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key21";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key20";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key2";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key19";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key18";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key17";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key16";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key15";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key14";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key13";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key12";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key11";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key10";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key1";
+ALTER TABLE ONLY public."Users" DROP CONSTRAINT "Users_email_key";
+ALTER TABLE ONLY public."Settings" DROP CONSTRAINT "Settings_pkey";
+ALTER TABLE ONLY public."SequelizeMeta" DROP CONSTRAINT "SequelizeMeta_pkey";
+ALTER TABLE ONLY public."SOs" DROP CONSTRAINT "SOs_pkey";
+ALTER TABLE ONLY public."Passes" DROP CONSTRAINT "Passes_pkey";
+ALTER TABLE ONLY public."Locations" DROP CONSTRAINT "Locations_pkey";
+ALTER TABLE public."Settings" ALTER COLUMN id DROP DEFAULT;
+DROP TABLE public."Users";
+DROP SEQUENCE public."Settings_id_seq";
+DROP TABLE public."Settings";
+DROP TABLE public."SequelizeMeta";
+DROP TABLE public."SOs";
+DROP TABLE public."Passes";
+DROP TABLE public."Locations";
+DROP TYPE public."enum_Settings_theme";
+--
+-- Name: enum_Settings_theme; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public."enum_Settings_theme" AS ENUM (
+    'light',
+    'dark'
+);
+
+
+ALTER TYPE public."enum_Settings_theme" OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: Locations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Locations" (
+    id uuid NOT NULL,
+    "studentId" uuid NOT NULL,
+    latitude double precision NOT NULL,
+    longitude double precision NOT NULL,
+    "timestamp" timestamp with time zone,
+    accuracy double precision,
+    "isGeofenceViolation" boolean DEFAULT false
+);
+
+
+ALTER TABLE public."Locations" OWNER TO postgres;
+
+--
+-- Name: Passes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Passes" (
+    id uuid NOT NULL,
+    "userId" uuid NOT NULL,
+    type character varying(255) NOT NULL,
+    "validFrom" timestamp with time zone,
+    "validTo" timestamp with time zone,
+    barcode character varying(255) NOT NULL,
+    "barcodeImagePath" character varying(255),
+    status character varying(255) DEFAULT 'active'::character varying,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    purpose character varying(255),
+    "rejectionReason" character varying(255)
+);
+
+
+ALTER TABLE public."Passes" OWNER TO postgres;
+
+--
+-- Name: SOs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."SOs" (
+    id uuid NOT NULL,
+    "studentId" uuid NOT NULL,
+    latitude double precision,
+    longitude double precision,
+    "alertType" character varying(255) DEFAULT 'manual'::character varying,
+    status character varying(255) DEFAULT 'active'::character varying,
+    "resolvedAt" timestamp with time zone,
+    "resolvedBy" uuid,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."SOs" OWNER TO postgres;
+
+--
+-- Name: SequelizeMeta; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."SequelizeMeta" (
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public."SequelizeMeta" OWNER TO postgres;
+
+--
+-- Name: Settings; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Settings" (
+    id integer NOT NULL,
+    "userId" uuid NOT NULL,
+    theme public."enum_Settings_theme" DEFAULT 'light'::public."enum_Settings_theme",
+    notifications boolean DEFAULT true,
+    biometric boolean DEFAULT false,
+    "locationTracking" boolean DEFAULT true,
+    "emergencyAlerts" boolean DEFAULT true,
+    "passNotifications" boolean DEFAULT true,
+    "autoLogout" boolean DEFAULT false,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."Settings" OWNER TO postgres;
+
+--
+-- Name: Settings_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Settings_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Settings_id_seq" OWNER TO postgres;
+
+--
+-- Name: Settings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Settings_id_seq" OWNED BY public."Settings".id;
+
+
+--
+-- Name: Users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Users" (
+    id uuid NOT NULL,
+    name character varying(255),
+    email character varying(255),
+    password character varying(255),
+    role character varying(255) DEFAULT 'student'::character varying,
+    fcm_token character varying(255),
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "parentId" uuid
+);
+
+
+ALTER TABLE public."Users" OWNER TO postgres;
+
+--
+-- Name: Settings id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Settings" ALTER COLUMN id SET DEFAULT nextval('public."Settings_id_seq"'::regclass);
+
+
+--
+-- Data for Name: Locations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Locations" (id, "studentId", latitude, longitude, "timestamp", accuracy, "isGeofenceViolation") FROM stdin;
+f5af422e-43ab-403d-b6de-53a3068597de	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437359	77.101564	2026-01-14 19:13:31.998+00	17.079999923706055	t
+a67798f7-fc1c-4502-835c-f042fa857b73	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372534	77.1015665	2026-01-14 19:15:44.095+00	122.072998046875	t
+b1cd083d-7656-4a5b-9d05-1595bdee95a4	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4383346	77.1012842	2026-01-14 19:15:49.229+00	100	t
+4795a9e4-afa5-443b-b0c5-fb9358c2896a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373929	77.1015598	2026-01-14 19:15:49.454+00	20.465999603271484	t
+15ed723f-da05-44b1-ab11-88c742ceb48c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4383577	77.1012836	2026-01-14 19:16:34.794+00	100	t
+aeceee27-1148-4c4b-8432-32124bcc370d	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374154	77.101558	2026-01-14 19:16:35.01+00	18.93199920654297	t
+8867cb00-a2c2-4998-8052-9b2a28659861	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437393	77.1015646	2026-01-14 19:34:46.594+00	16.47599983215332	t
+318cf637-8728-4150-87fc-e0ccae1e7c9f	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373877	77.1015625	2026-01-14 19:34:46.628+00	22.295000076293945	t
+e92effad-31a0-4ab2-978e-3b48e4bba085	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372764	77.1015668	2026-01-14 19:35:19.998+00	20.031999588012695	t
+f5c9e21c-4e8d-4d27-9195-c1a4265116d0	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373715	77.1015567	2026-01-14 19:35:36.732+00	120.86599731445312	t
+3ebbe28a-d3b8-4b22-8e7b-b61ef2b27879	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372737	77.1015642	2026-01-14 19:35:56.613+00	121.22200012207031	t
+f3c6ba79-5bad-46f2-a299-39e49e08743e	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373673	77.1015644	2026-01-14 19:36:03.865+00	19.875999450683594	t
+2e457942-8470-4786-8831-3dca32b1edfe	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372766	77.1015633	2026-01-14 19:36:58.314+00	20.37700080871582	t
+9046a1f3-5598-4133-ab79-452ba8d82719	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373802	77.1015648	2026-01-14 19:38:27.292+00	16.364999771118164	t
+5fe768c7-83d7-4290-8a57-095ea9a069e3	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372734	77.1015667	2026-01-14 19:40:51.063+00	20	t
+43b70b7a-41fd-4fc7-9b97-05c09240e6ba	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372734	77.1015667	2026-01-14 19:40:51.066+00	20	t
+8b0d11d3-716b-4ceb-b297-7e0b85d0ba93	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373676	77.1015606	2026-01-14 19:41:35.974+00	122.72100067138672	t
+b6f20cce-08d4-4591-ac35-bef92820d6ee	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373676	77.1015606	2026-01-14 19:41:35.977+00	122.72100067138672	t
+226cc5ff-3556-4dcf-b227-abf682e831c4	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372671	77.1015688	2026-01-14 19:42:24.755+00	19.641000747680664	t
+9ce10771-9c26-4e1e-ba45-48baaa77b1f8	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372671	77.1015688	2026-01-14 19:42:24.756+00	19.641000747680664	t
+c5c3c869-4ae1-4515-af27-71c11e8b3e53	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373741	77.1015603	2026-01-14 19:42:34.462+00	17.677000045776367	t
+e5cff6e0-4806-4993-8f33-464ed740dafd	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373741	77.1015603	2026-01-14 19:42:34.463+00	17.677000045776367	t
+e5f43b43-df99-49db-a648-55249fe821a4	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372762	77.1015632	2026-01-14 19:43:11.684+00	21.326000213623047	t
+5c8851f0-d50a-43c1-b5e0-40ae5879bd41	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372762	77.1015632	2026-01-14 19:43:11.685+00	21.326000213623047	t
+be317c9e-1ff1-4726-9796-c552db8120a9	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373736	77.1015644	2026-01-14 19:44:04.278+00	22.81399917602539	t
+18a43101-03f0-46ad-9881-5b7042cd10d8	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373736	77.1015644	2026-01-14 19:44:04.28+00	22.81399917602539	t
+31429dcc-a9c9-46ad-97ac-7833fbeaeecd	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437272	77.1015627	2026-01-14 19:47:33.94+00	20	t
+ca1e7311-10fc-49b1-8a58-b89cd2fe97de	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437272	77.1015627	2026-01-14 19:47:33.94+00	20	t
+912129af-1ed1-48d1-abdb-a3e8995c525f	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374244	77.101561	2026-01-14 20:12:46.975+00	20.05900001525879	t
+e4b4653a-40c0-47b8-a3f1-6c0bcd9d53b8	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374918	77.1014669	2026-01-14 20:13:11.855+00	174	t
+4cfe6f8a-1271-4b89-9057-6acf8de336de	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4376487	77.1012491	2026-01-14 20:13:16.854+00	177.5	t
+8dc6ba62-3c95-4cd7-8c70-bd149d143b9e	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4375782	77.1010426	2026-01-14 20:13:25.851+00	265.5719909667969	t
+a8997171-a8c4-4689-a099-4a5ac92fa690	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373109	77.1015539	2026-01-14 20:13:32.759+00	20.187999725341797	t
+8f11d12a-5e7b-4939-b8b8-08b63ad975c7	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374174	77.1015632	2026-01-14 20:13:46.743+00	15.800999641418457	t
+a31adf56-98e6-4c23-90d8-e22fbc080a51	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373185	77.1015597	2026-01-14 20:14:03.108+00	120.80500030517578	t
+91cb5ed6-cb67-463d-9d32-651f7c8a1dfa	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374118	77.1015613	2026-01-14 20:14:03.291+00	15.913999557495117	t
+881f2d03-776c-4fec-b76f-6547e2a31c42	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373029	77.1015654	2026-01-14 20:14:19.771+00	20.007999420166016	t
+322d0286-7e86-4458-8b46-52c138cc6a3f	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373965	77.1015653	2026-01-14 20:14:47.99+00	15.942999839782715	t
+1bc26496-56e0-47f6-8962-49dd2da559ba	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373144	77.1015672	2026-01-14 20:42:54.902+00	19.253999710083008	t
+8f707b87-f834-49ac-a1df-99ed87ded29b	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374356	77.1015624	2026-01-18 19:57:04.46+00	16.97100067138672	t
+cffec983-af9d-4277-b614-0701979111ee	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373205	77.1015607	2026-01-18 19:57:23.428+00	18.972999572753906	t
+25d7a48e-2578-493d-8b53-3c5b776fb7eb	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374399	77.1015673	2026-01-18 19:57:52.682+00	13.928000450134277	t
+af9eb60e-f78c-4074-b369-0e8552f65f74	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372917	77.1015681	2026-01-18 19:58:02.938+00	17.961999893188477	t
+71096bc5-438d-4b4c-94ba-3ccbba0fcd92	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373936	77.1015733	2026-01-18 19:58:31.606+00	16.70800018310547	t
+685c9ed5-6c6a-4134-a5ac-a7c718daed6b	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374874	77.101561	2026-01-18 20:01:37.801+00	117.23699951171875	t
+2f4cbd30-f714-4765-a4d2-585e55cd30be	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372862	77.1015688	2026-01-18 20:01:42.686+00	18.899999618530273	t
+f765c1af-dad9-45c8-9d81-ed602a227295	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373818	77.1015712	2026-01-18 20:04:31.632+00	119.20099639892578	t
+2107eb79-0055-46bb-9a4e-0de186c562c7	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372694	77.1015748	2026-01-18 20:05:01.188+00	17.6200008392334	t
+a3c52ac6-677d-4a8c-900a-fbf87d1f1fd5	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373665	77.1015605	2026-01-18 20:05:21.206+00	119.2699966430664	t
+aaec48eb-70c0-4cae-9905-3ade1936dc79	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	2026-01-18 20:15:39.672+00	3.9000000953674316	t
+a891a9a2-ddb7-4d13-a2b6-9a6495763ba7	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	2026-01-18 21:23:14.149+00	3.9000000953674316	t
+21828e74-49cd-4fc4-9371-c1cd8b1958c7	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4337116	77.1025621	2026-01-19 09:50:08.402+00	20.04400062561035	t
+63c73560-5a09-4858-a780-4cd1a7b366dc	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336416	77.102719	2026-01-19 09:50:18.434+00	17.691999435424805	t
+d9b42c9f-09e2-476c-ad50-b882fb2ec2df	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336016	77.1028155	2026-01-19 09:50:31.456+00	14.692999839782715	t
+6589eb33-338f-4bed-a3e9-50ef6b3ceb8a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336611	77.1027221	2026-01-19 09:51:32.726+00	10.621999740600586	t
+4783b891-c9c7-4ad2-bac0-41dbdc63d990	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336711	77.1029147	2026-01-19 10:02:01.536+00	10.5	t
+144396bf-9e17-46b6-ad57-faf2a1956edb	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336131	77.1028158	2026-01-19 10:03:01.497+00	8	t
+5b4f6176-944d-4caf-b8da-4850c8eab29c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4338295	77.1029553	2026-01-19 10:17:06.034+00	18.78499984741211	t
+a52b4057-ff12-4474-966c-96461d51c732	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4337133	77.1028806	2026-01-19 10:17:12.484+00	22.003999710083008	t
+a0e963e8-1346-4a4c-86a9-c9c823f5cc65	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4337603	77.102874	2026-01-19 10:46:50.26+00	22.141000747680664	t
+d38f310b-1d35-4878-b653-ffb1139eb30d	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336361	77.1028029	2026-01-19 10:47:01.008+00	13.79800033569336	t
+6df68db1-5d32-438b-9eae-bcd3f86df454	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.433783	77.1029357	2026-01-19 10:47:20.717+00	11.73900032043457	t
+98cd1e5b-be6e-4952-831a-ba24b638693f	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336928	77.1029208	2026-01-19 10:47:40.464+00	5.5	t
+7c218426-664a-48ba-b5d9-ea6618776024	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4333081	77.1023365	2026-01-20 06:58:01.394+00	14.157999992370605	t
+db33f805-6a95-4d76-a54c-89906c425abf	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	2026-01-21 10:53:26.231+00	3.9000000953674316	t
+697363b1-6c7c-4c71-8c7c-757a919f2a7b	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.433699	77.1027134	2026-02-02 10:42:11.545+00	12.100000381469727	t
+515550b4-8a0c-40e3-b214-8d185357597e	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337271	77.1028285	2026-02-02 10:45:09.26+00	5.5	t
+180f135e-2089-494e-a3da-bbd484bb1a4e	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4336665	77.1027289	2026-02-02 10:48:09.391+00	8.993000030517578	t
+0d0b5623-7584-4c42-8ed4-8b51c6146afe	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4336665	77.1027289	2026-02-02 10:48:09.392+00	8.993000030517578	t
+\.
+
+
+--
+-- Data for Name: Passes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Passes" (id, "userId", type, "validFrom", "validTo", barcode, "barcodeImagePath", status, "createdAt", "updatedAt", purpose, "rejectionReason") FROM stdin;
+5d0037a2-6293-470f-a50d-675ba3a48ad6	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-15 01:35:16+00	2026-01-15 05:35:16+00	bc6549fc-890a-468a-aabe-560c2d3a89cb	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\bc6549fc-890a-468a-aabe-560c2d3a89cb.png	approved_warden	2026-01-14 19:05:16.224+00	2026-01-14 19:29:24.44+00	\N	\N
+0e12f2a3-a22a-4e27-829d-9233d21ed98f	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-14 20:11:04.594+00	2026-01-15 15:27:00+00	0598d795-e2a3-4879-9a93-734e312ce534	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\0598d795-e2a3-4879-9a93-734e312ce534.png	approved_warden	2026-01-14 20:11:05.616+00	2026-01-14 20:14:51.76+00	bowling	\N
+aa0f0645-43da-4a40-a372-f285b94658f9	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-14 19:38:52.212+00	2026-01-15 12:38:00+00	5e3e71b4-064b-4184-b315-dcd819496313	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\5e3e71b4-064b-4184-b315-dcd819496313.png	approved_warden	2026-01-14 19:38:53.217+00	2026-01-14 20:14:56.505+00	gamenight	\N
+21f7a413-0e90-4c0f-a536-c72f361c0e45	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-18 19:31:04.599+00	2026-01-18 20:30:00+00	0787d304-d39b-4992-957c-4e3f0798475b	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\0787d304-d39b-4992-957c-4e3f0798475b.png	approved_warden	2026-01-18 19:31:05.719+00	2026-01-18 19:33:50.427+00	getting out	\N
+a5c2469c-6a9a-495a-8285-c12378c89eb6	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-18 19:40:23.718+00	2026-01-20 00:40:00+00	3339ea0a-053c-4e97-9acd-c5e239f1c8ed	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\3339ea0a-053c-4e97-9acd-c5e239f1c8ed.png	approved_warden	2026-01-18 19:40:24.765+00	2026-01-18 19:42:33.366+00	getting out	\N
+25dbc9d0-8058-4afd-b78a-7b638960c0f6	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-18 19:56:48.136+00	2026-01-20 10:00:00+00	99eac61d-514a-42e6-bfbb-f754ce4a6cc0	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\99eac61d-514a-42e6-bfbb-f754ce4a6cc0.png	approved_warden	2026-01-18 19:56:49.168+00	2026-01-18 20:16:37.865+00	hello	\N
+76dd0ea4-04ed-49f0-9c82-cbf756a59153	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-18 19:49:03.231+00	2026-01-18 21:52:00+00	00ac4497-a73d-4422-84d3-ee1f297eb390	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\00ac4497-a73d-4422-84d3-ee1f297eb390.png	approved_warden	2026-01-18 19:49:04.364+00	2026-01-18 20:16:40.408+00	heheee	\N
+dc40b4f2-062a-41fa-8175-88e9f984233a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-18 20:42:19.956+00	2026-01-19 22:42:00+00	11d33ccc-17d6-4c51-943c-f4c73c51ce75	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\11d33ccc-17d6-4c51-943c-f4c73c51ce75.png	approved_parent	2026-01-18 20:42:21.137+00	2026-01-18 20:50:17.166+00	helllllll	\N
+caec7c4c-c260-4f40-9247-6f5209c24c0c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-19 09:48:01.664+00	2026-01-19 09:47:00+00	6f6ccecb-77d1-4625-835d-b767596bc65b	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\6f6ccecb-77d1-4625-835d-b767596bc65b.png	approved_warden	2026-01-19 09:48:03.719+00	2026-01-19 10:00:27.79+00	party Karni hai	\N
+15f8763a-384f-4cc3-b473-4d6fa7157bb9	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-19 20:39:49.793+00	2026-01-20 00:39:00+00	3170b229-968f-469a-a344-25325a3b6075	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\3170b229-968f-469a-a344-25325a3b6075.png	approved_parent	2026-01-19 20:39:49.757+00	2026-01-19 21:00:07.281+00	outing	\N
+1dea3962-6eed-44ca-9ddd-853d15a320b1	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-20 07:06:26.075+00	2026-01-19 20:00:00+00	aa0690f5-9037-48bb-b945-754cebaf241a	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\aa0690f5-9037-48bb-b945-754cebaf241a.png	approved_parent	2026-01-20 07:06:27.287+00	2026-01-21 06:54:57.917+00	journey	\N
+a7546a90-18c7-43b4-a20e-0330dc7b92f3	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-21 06:54:49.348+00	2026-01-22 12:54:00+00	91481d33-0696-431f-b830-e42ca0be03ba	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\91481d33-0696-431f-b830-e42ca0be03ba.png	rejected	2026-01-21 06:54:47.459+00	2026-01-21 06:56:21.135+00	moving	late
+b1639581-6927-49d5-bf20-2b7c5a0e3f83	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-21 07:00:07.501+00	2026-01-21 11:59:00+00	19bc74e7-92b7-4f1e-802e-7156404b32db	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\19bc74e7-92b7-4f1e-802e-7156404b32db.png	approved_warden	2026-01-21 07:00:07.622+00	2026-01-21 07:00:51.684+00	outing	\N
+19e01a18-699f-41d2-9fd3-c6fa39da5818	f60c9ec2-5506-4808-aa75-ffcee1d351c9	outing	2026-01-21 11:11:12.079+00	2026-01-21 11:10:00+00	9dbbe26c-91bb-4eeb-8c4b-7b61fc6ca752	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\9dbbe26c-91bb-4eeb-8c4b-7b61fc6ca752.png	approved_parent	2026-01-21 11:11:12.24+00	2026-01-21 11:11:44.637+00	outing	\N
+97f2084d-93e2-4e8a-9802-3a7f0a911758	5bb8a062-3bd7-4771-9585-991ded6e23c3	outing	2026-02-02 10:48:18.505+00	2026-02-04 10:48:00+00	b80e9f2f-e6fb-4126-a3f4-97f514d7bb9a	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\b80e9f2f-e6fb-4126-a3f4-97f514d7bb9a.png	approved_parent	2026-02-02 10:48:20.007+00	2026-02-02 10:49:32.412+00	...	\N
+556b4ef4-d819-4ee5-8d7b-496ea0c01936	5bb8a062-3bd7-4771-9585-991ded6e23c3	outing	2026-02-03 09:43:23.891+00	2026-02-02 22:50:00+00	7f1d5900-2225-4eb9-bee7-dcf6cf3cd416	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\7f1d5900-2225-4eb9-bee7-dcf6cf3cd416.png	pending	2026-02-03 09:43:24.789+00	2026-02-03 09:43:24.789+00	shopping	\N
+639905fa-e4b4-4259-a2a3-826f49a4795f	5bb8a062-3bd7-4771-9585-991ded6e23c3	outing	2026-02-03 09:53:37.148+00	2026-02-02 23:53:00+00	05a95a6e-f84d-4059-b39e-327b5bea19ca	D:\\cam_pass_main\\campass_gravity\\backend\\docs\\barcodes\\05a95a6e-f84d-4059-b39e-327b5bea19ca.png	pending	2026-02-03 09:53:38.055+00	2026-02-03 09:53:38.055+00	library	\N
+\.
+
+
+--
+-- Data for Name: SOs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."SOs" (id, "studentId", latitude, longitude, "alertType", status, "resolvedAt", "resolvedBy", "createdAt", "updatedAt") FROM stdin;
+1ee9e8d5-7d37-4a5c-b159-41e3854dc210	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373538	77.1015643	manual	resolved	2026-01-14 19:21:13.522+00	\N	2026-01-14 19:13:51.047+00	2026-01-14 19:21:13.522+00
+069cbc9a-5e93-4d5c-b4ec-9052454fb8d9	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372534	77.1015665	geofence	resolved	2026-01-14 19:21:16.841+00	\N	2026-01-14 19:15:44.099+00	2026-01-14 19:21:16.841+00
+319a7040-3853-47a5-a001-3e7eb90998ee	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4383346	77.1012842	geofence	resolved	2026-01-14 19:21:17.417+00	\N	2026-01-14 19:15:49.235+00	2026-01-14 19:21:17.417+00
+9216578c-c4d8-47ba-b543-6295f6caaed0	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437359	77.101564	geofence	resolved	2026-01-14 19:21:20.425+00	\N	2026-01-14 19:13:32.004+00	2026-01-14 19:21:20.425+00
+53309fa4-9497-4434-a5bf-4b318f6fdfde	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373929	77.1015598	geofence	resolved	2026-01-14 19:21:21.312+00	\N	2026-01-14 19:15:49.458+00	2026-01-14 19:21:21.312+00
+270e5860-b55c-4491-a662-39b4860b31d7	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4383577	77.1012836	geofence	resolved	2026-01-14 19:21:22.19+00	\N	2026-01-14 19:16:34.798+00	2026-01-14 19:21:22.19+00
+13ea03e7-c44c-431f-bc42-bf7c654e9782	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374154	77.101558	geofence	resolved	2026-01-14 19:21:22.852+00	\N	2026-01-14 19:16:35.015+00	2026-01-14 19:21:22.852+00
+53277ffa-06ed-4e91-95d7-4dc36afe41e9	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437393	77.1015646	geofence	active	\N	\N	2026-01-14 19:34:46.6+00	2026-01-14 19:34:46.6+00
+691cbd52-5560-4e7a-8c69-38b04f30b345	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373877	77.1015625	geofence	active	\N	\N	2026-01-14 19:34:46.631+00	2026-01-14 19:34:46.631+00
+02dcc551-8896-4c36-b29b-3be61a622359	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372764	77.1015668	geofence	active	\N	\N	2026-01-14 19:35:20.003+00	2026-01-14 19:35:20.003+00
+8b8ca324-0419-4753-8d93-f2ea3bdc6d4b	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373715	77.1015567	geofence	active	\N	\N	2026-01-14 19:35:36.738+00	2026-01-14 19:35:36.738+00
+ee1cdf5f-cc2b-4ae2-b46d-3c1218999fd7	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372737	77.1015642	geofence	active	\N	\N	2026-01-14 19:35:56.617+00	2026-01-14 19:35:56.617+00
+c2bdf79c-8228-4954-975b-e9fe0712e648	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373673	77.1015644	geofence	active	\N	\N	2026-01-14 19:36:03.868+00	2026-01-14 19:36:03.868+00
+1dcad673-c0e8-454e-ac3c-3e8c9847cf45	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372766	77.1015633	geofence	active	\N	\N	2026-01-14 19:36:58.318+00	2026-01-14 19:36:58.318+00
+3d10d148-be6c-45d7-953a-f8c50942bf46	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373802	77.1015648	geofence	active	\N	\N	2026-01-14 19:38:27.296+00	2026-01-14 19:38:27.296+00
+a1ec2f7f-83c3-4456-ab31-a79ab5ab3a5d	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374067	77.1015551	manual	active	\N	\N	2026-01-14 19:39:17.452+00	2026-01-14 19:39:17.452+00
+41f7d490-6798-48dc-b7cc-eab407c50fc0	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372734	77.1015667	geofence	active	\N	\N	2026-01-14 19:40:51.067+00	2026-01-14 19:40:51.067+00
+17c0db02-750e-4e1a-bae4-393055ec120a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372734	77.1015667	geofence	active	\N	\N	2026-01-14 19:40:51.069+00	2026-01-14 19:40:51.069+00
+d3489f68-1a65-42cb-81eb-949100b21046	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373676	77.1015606	geofence	active	\N	\N	2026-01-14 19:41:35.978+00	2026-01-14 19:41:35.978+00
+bff17cbd-6441-4b0a-9695-2fd011fbbf98	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373676	77.1015606	geofence	active	\N	\N	2026-01-14 19:41:35.981+00	2026-01-14 19:41:35.981+00
+4ddf6f93-cd47-4106-9d87-5141bccc5398	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372671	77.1015688	geofence	active	\N	\N	2026-01-14 19:42:24.761+00	2026-01-14 19:42:24.761+00
+5e5a4cca-6d94-42ca-9d8e-c2652259a4b0	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372671	77.1015688	geofence	active	\N	\N	2026-01-14 19:42:24.762+00	2026-01-14 19:42:24.762+00
+5311d8f0-14c8-4685-a8a5-6087102a8aab	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373741	77.1015603	geofence	active	\N	\N	2026-01-14 19:42:34.468+00	2026-01-14 19:42:34.468+00
+45b2ceff-7678-47b1-9fcf-0099318608da	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373741	77.1015603	geofence	active	\N	\N	2026-01-14 19:42:34.469+00	2026-01-14 19:42:34.469+00
+9dda2628-7c31-4ad9-8a80-ddfb27dda437	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372762	77.1015632	geofence	active	\N	\N	2026-01-14 19:43:11.688+00	2026-01-14 19:43:11.688+00
+c6a218d4-d561-4f44-83df-657d3a6753aa	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372762	77.1015632	geofence	active	\N	\N	2026-01-14 19:43:11.689+00	2026-01-14 19:43:11.689+00
+14109994-8af2-41b1-9957-635bf3aad65b	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373736	77.1015644	geofence	active	\N	\N	2026-01-14 19:44:04.283+00	2026-01-14 19:44:04.283+00
+9c4785b6-272e-4b44-93c1-d7739e23b692	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373736	77.1015644	geofence	active	\N	\N	2026-01-14 19:44:04.284+00	2026-01-14 19:44:04.284+00
+64a1de8f-6d09-4dea-9360-7423165fe08e	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437272	77.1015627	geofence	active	\N	\N	2026-01-14 19:47:33.944+00	2026-01-14 19:47:33.944+00
+f5ea0e4c-a500-46a2-8e33-8d6d78b21583	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.437272	77.1015627	geofence	active	\N	\N	2026-01-14 19:47:33.944+00	2026-01-14 19:47:33.944+00
+6c2629fc-ef0c-477c-b257-23544a02fb77	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374244	77.101561	geofence	active	\N	\N	2026-01-14 20:12:46.981+00	2026-01-14 20:12:46.981+00
+a18a6788-ce84-43a3-8db9-0134ed8d800a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374918	77.1014669	geofence	active	\N	\N	2026-01-14 20:13:11.858+00	2026-01-14 20:13:11.858+00
+16a6432e-3ff4-4f5d-87d6-ecb2e40f7ef1	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4376487	77.1012491	geofence	active	\N	\N	2026-01-14 20:13:16.86+00	2026-01-14 20:13:16.86+00
+8f25d832-ea01-408d-b1cb-adb0d72eee96	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4375782	77.1010426	geofence	active	\N	\N	2026-01-14 20:13:25.864+00	2026-01-14 20:13:25.864+00
+98b87840-29e5-4648-92ae-e3e394c8195f	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373109	77.1015539	geofence	active	\N	\N	2026-01-14 20:13:32.766+00	2026-01-14 20:13:32.766+00
+e7ebc6ec-479c-44fc-9f87-c939b374667d	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374174	77.1015632	geofence	active	\N	\N	2026-01-14 20:13:46.749+00	2026-01-14 20:13:46.749+00
+de72ff33-c6d5-4c56-abc8-78bc88481ff5	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373185	77.1015597	geofence	active	\N	\N	2026-01-14 20:14:03.115+00	2026-01-14 20:14:03.115+00
+99aff120-357d-4a00-b0a7-6896ab2389fe	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374118	77.1015613	geofence	active	\N	\N	2026-01-14 20:14:03.296+00	2026-01-14 20:14:03.296+00
+e540d73c-8b72-4809-ac96-2a18f917f85a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373029	77.1015654	geofence	active	\N	\N	2026-01-14 20:14:19.774+00	2026-01-14 20:14:19.774+00
+3b676758-b847-4b5e-b348-8c02daf9aa92	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373144	77.1015672	geofence	resolved	2026-01-18 19:33:55.044+00	\N	2026-01-14 20:42:54.908+00	2026-01-18 19:33:55.044+00
+5d9a5f5a-05c1-4bb4-9858-70bb5d8e4b77	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373965	77.1015653	geofence	resolved	2026-01-18 19:33:55.336+00	\N	2026-01-14 20:14:47.997+00	2026-01-18 19:33:55.336+00
+dcfe6405-38dc-46f3-a54c-e5e1fe7a7b38	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374356	77.1015624	geofence	active	\N	\N	2026-01-18 19:57:04.469+00	2026-01-18 19:57:04.469+00
+acb19f22-fb6b-462b-9388-2b6bf059e8e5	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373205	77.1015607	geofence	active	\N	\N	2026-01-18 19:57:23.431+00	2026-01-18 19:57:23.431+00
+01af6ecd-a523-4b22-86d2-32d2416b232c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374399	77.1015673	geofence	active	\N	\N	2026-01-18 19:57:52.687+00	2026-01-18 19:57:52.687+00
+4efc161d-f82f-4ce8-b6a7-30f82e48e402	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372917	77.1015681	geofence	active	\N	\N	2026-01-18 19:58:02.942+00	2026-01-18 19:58:02.942+00
+d4fc10c8-c9f0-4eb9-8512-422a7ff6f817	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373936	77.1015733	geofence	active	\N	\N	2026-01-18 19:58:31.609+00	2026-01-18 19:58:31.609+00
+c1c589b7-8731-42f4-a923-b6c3db0b99fd	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4374874	77.101561	geofence	active	\N	\N	2026-01-18 20:01:37.805+00	2026-01-18 20:01:37.805+00
+e296c706-2466-45c2-aee6-2055b451810a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372862	77.1015688	geofence	active	\N	\N	2026-01-18 20:01:42.69+00	2026-01-18 20:01:42.69+00
+fd07cc50-0d22-42f1-a084-cde962337e50	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373818	77.1015712	geofence	active	\N	\N	2026-01-18 20:04:31.638+00	2026-01-18 20:04:31.638+00
+0d7be94d-7459-48a7-a447-acd50c29b0d5	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4372694	77.1015748	geofence	active	\N	\N	2026-01-18 20:05:01.192+00	2026-01-18 20:05:01.192+00
+1b7869ae-f9dd-47da-878e-755af2d7927c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4373665	77.1015605	geofence	active	\N	\N	2026-01-18 20:05:21.211+00	2026-01-18 20:05:21.211+00
+507bb7ca-1093-4091-bc54-27988d0dd58c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	geofence	active	\N	\N	2026-01-18 20:15:39.678+00	2026-01-18 20:15:39.678+00
+3c2e99d3-58bc-478f-8a2a-a5eb7b6da8f7	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	manual	active	\N	\N	2026-01-18 20:15:49.296+00	2026-01-18 20:15:49.296+00
+d411821d-b607-4862-8b4b-1d1fb4dd9c7c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336611	77.1027221	geofence	active	\N	\N	2026-01-19 09:51:32.73+00	2026-01-19 09:51:32.73+00
+c62a4457-abee-4074-9ac9-6ff93d777fd2	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	geofence	resolved	2026-01-18 21:26:00.159+00	\N	2026-01-18 21:23:14.165+00	2026-01-18 21:26:00.159+00
+0b9cebbc-c819-4668-8ce6-8ecf9c2c3e2e	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4332788	77.102227	manual	active	\N	\N	2026-01-19 08:19:34.246+00	2026-01-19 08:19:34.246+00
+b9e0c858-cc1d-40a9-bf45-49563344bbbf	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4332788	77.102227	manual	active	\N	\N	2026-01-19 08:19:45.006+00	2026-01-19 08:19:45.006+00
+6a844288-141e-4e4b-98ca-a54dd76dfa94	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4340824	77.1027316	manual	active	\N	\N	2026-01-19 09:26:03.534+00	2026-01-19 09:26:03.534+00
+47a878c6-86c9-4af7-84e7-9d3b410bac20	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336227	77.1027548	manual	active	\N	\N	2026-01-19 09:47:41.848+00	2026-01-19 09:47:41.848+00
+3c384ea5-f274-47c0-8a3d-ef57b511be40	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4337116	77.1025621	geofence	active	\N	\N	2026-01-19 09:50:08.413+00	2026-01-19 09:50:08.413+00
+8988f66c-7d8b-49f9-b9bc-573c2e229890	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336416	77.102719	geofence	active	\N	\N	2026-01-19 09:50:18.437+00	2026-01-19 09:50:18.437+00
+bb2a2e1f-296f-41d2-8bae-3afbd406691c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336016	77.1028155	geofence	active	\N	\N	2026-01-19 09:50:31.459+00	2026-01-19 09:50:31.459+00
+81cc8027-9c71-4b26-a97c-2b75a3a4399a	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336711	77.1029147	geofence	active	\N	\N	2026-01-19 10:02:01.543+00	2026-01-19 10:02:01.543+00
+44953a6a-38cc-44b3-9571-2502b392bb36	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336131	77.1028158	geofence	active	\N	\N	2026-01-19 10:03:01.5+00	2026-01-19 10:03:01.5+00
+5a50dffd-be04-4e88-9e69-50664e408711	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4338295	77.1029553	geofence	active	\N	\N	2026-01-19 10:17:06.045+00	2026-01-19 10:17:06.045+00
+31c63ff8-6c51-4867-bf40-e2c720969901	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4337133	77.1028806	geofence	active	\N	\N	2026-01-19 10:17:12.488+00	2026-01-19 10:17:12.488+00
+9f654b6b-f259-4fb1-b326-21ea1956fb6e	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4337603	77.102874	geofence	active	\N	\N	2026-01-19 10:46:50.266+00	2026-01-19 10:46:50.266+00
+73df148c-07dd-4d93-9114-ce1af627b700	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336361	77.1028029	geofence	active	\N	\N	2026-01-19 10:47:01.013+00	2026-01-19 10:47:01.013+00
+adf914a9-8506-4b73-9329-574070a91a83	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.433783	77.1029357	geofence	active	\N	\N	2026-01-19 10:47:20.721+00	2026-01-19 10:47:20.721+00
+20381402-1a8b-4a5d-9bc7-ef055afa1475	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4336928	77.1029208	geofence	active	\N	\N	2026-01-19 10:47:40.467+00	2026-01-19 10:47:40.467+00
+57a21061-e660-4c7c-a10c-73a63b2e56e2	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4332528	77.1022891	manual	active	\N	\N	2026-01-20 06:57:43.271+00	2026-01-20 06:57:43.271+00
+b992b35f-6e76-45e8-9cec-a347b903505b	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4332528	77.1022891	manual	active	\N	\N	2026-01-20 06:57:46.625+00	2026-01-20 06:57:46.625+00
+07b3c844-df80-4f0f-a4da-b4f64b15c9fc	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4333081	77.1023365	geofence	active	\N	\N	2026-01-20 06:58:01.404+00	2026-01-20 06:58:01.404+00
+0174bccf-a6c9-4cf3-b5e0-138ae614326b	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.4337844	77.1026248	manual	active	\N	\N	2026-01-21 06:53:00.362+00	2026-01-21 06:53:00.362+00
+15a46d1b-a46c-4a88-94fc-3eb13e0cb964	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	geofence	active	\N	\N	2026-01-21 10:53:26.255+00	2026-01-21 10:53:26.255+00
+cb428e01-94ba-4943-a6ed-cc7886ecb11c	f60c9ec2-5506-4808-aa75-ffcee1d351c9	28.459497	77.026638	manual	active	\N	\N	2026-01-21 11:17:06.69+00	2026-01-21 11:17:06.69+00
+6e6dcbbb-c4ea-4c38-a83b-1e3a94f92ab2	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.433699	77.1027134	geofence	active	\N	\N	2026-02-02 10:42:11.562+00	2026-02-02 10:42:11.562+00
+632efa7f-a4e2-47f8-b15d-3937cb4d3a6e	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337249	77.1028106	manual	active	\N	\N	2026-02-02 10:44:48.053+00	2026-02-02 10:44:48.053+00
+d67609d8-1a97-4773-bda5-9f7a671a0c9c	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337271	77.1028285	geofence	active	\N	\N	2026-02-02 10:45:09.263+00	2026-02-02 10:45:09.263+00
+ef467071-d2c5-437e-8f77-c37decb29d1d	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337271	77.1028285	manual	active	\N	\N	2026-02-02 10:45:10.059+00	2026-02-02 10:45:10.059+00
+6dcc985d-9499-49c5-8898-714827706518	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337271	77.1028285	manual	active	\N	\N	2026-02-02 10:45:11.207+00	2026-02-02 10:45:11.207+00
+147b2f2a-8877-4e91-8c00-a1796cad8126	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337271	77.1028285	manual	active	\N	\N	2026-02-02 10:45:12.563+00	2026-02-02 10:45:12.563+00
+eb4e5527-c866-479a-85bc-8d670881d7be	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.433711	77.102796	manual	active	\N	\N	2026-02-02 10:45:13.231+00	2026-02-02 10:45:13.231+00
+1bc37661-eaea-4550-9b9c-81c4e8bc679d	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337061	77.1027809	manual	active	\N	\N	2026-02-02 10:45:16.185+00	2026-02-02 10:45:16.185+00
+1c9ab273-be75-46ce-a710-e3d378e2fbee	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337293	77.1028153	manual	active	\N	\N	2026-02-02 10:47:01.201+00	2026-02-02 10:47:01.201+00
+1e9b7031-a154-4499-9d88-1583de088d45	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337293	77.1028153	manual	active	\N	\N	2026-02-02 10:47:05.386+00	2026-02-02 10:47:05.386+00
+6e32a68b-7927-49de-96d6-42f660aebe43	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337181	77.1028034	manual	active	\N	\N	2026-02-02 10:47:14.484+00	2026-02-02 10:47:14.484+00
+51d4e56c-fb96-43e5-96b5-2b94e111c0bb	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337189	77.1028001	manual	active	\N	\N	2026-02-02 10:47:22.112+00	2026-02-02 10:47:22.112+00
+4369cd04-3509-442f-998d-8f87c202cd67	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337076	77.1027811	manual	active	\N	\N	2026-02-02 10:47:28.724+00	2026-02-02 10:47:28.724+00
+79746624-e72b-4173-bdb0-1e2c604a6dd2	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4336665	77.1027289	geofence	active	\N	\N	2026-02-02 10:48:09.396+00	2026-02-02 10:48:09.396+00
+68b9b6f8-8bec-480b-8257-2399a00759e7	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4336665	77.1027289	geofence	active	\N	\N	2026-02-02 10:48:09.397+00	2026-02-02 10:48:09.397+00
+b670348b-59c0-4c9e-aa84-c994f6aa052e	5bb8a062-3bd7-4771-9585-991ded6e23c3	28.4337089	77.1027795	manual	active	\N	\N	2026-02-02 10:48:33.027+00	2026-02-02 10:48:33.027+00
+\.
+
+
+--
+-- Data for Name: SequelizeMeta; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."SequelizeMeta" (name) FROM stdin;
+20260120000001-add-rejection-reason.js
+\.
+
+
+--
+-- Data for Name: Settings; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Settings" (id, "userId", theme, notifications, biometric, "locationTracking", "emergencyAlerts", "passNotifications", "autoLogout", "createdAt", "updatedAt") FROM stdin;
+2	d01a27dd-019c-4a14-8526-f76379807987	light	t	f	t	t	t	f	2026-01-14 18:36:33.946+00	2026-01-14 18:36:33.946+00
+3	fd7ed636-04de-4431-a8fc-3c91d46c3236	light	t	f	t	t	t	f	2026-01-14 18:36:36.3+00	2026-01-14 18:36:36.3+00
+4	bd5fe12d-9ebc-4658-b1a8-0ac9db03b013	light	t	f	t	t	t	f	2026-01-14 18:36:38.993+00	2026-01-14 18:36:38.993+00
+1	f60c9ec2-5506-4808-aa75-ffcee1d351c9	dark	t	f	t	t	t	f	2026-01-14 18:36:29.594+00	2026-01-19 10:46:40.325+00
+\.
+
+
+--
+-- Data for Name: Users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Users" (id, name, email, password, role, fcm_token, "createdAt", "updatedAt", "parentId") FROM stdin;
+d01a27dd-019c-4a14-8526-f76379807987	Demo Parent	parent@campass.com	$2b$10$T5sgxZhq9V4agMkbgfC2HOPnLd3xgJVk3oSVKMGdlnuciBynSExpm	parent	\N	2026-01-14 18:36:33.942+00	2026-01-14 18:36:33.942+00	\N
+fd7ed636-04de-4431-a8fc-3c91d46c3236	Demo Warden	warden@campass.com	$2b$10$QFCiZAP7ugefd8rMEppWGe7/k5Gf8nlR8TLeYptCIk3Re6vjreGGa	warden	\N	2026-01-14 18:36:36.295+00	2026-01-14 18:36:36.295+00	\N
+bd5fe12d-9ebc-4658-b1a8-0ac9db03b013	Demo Guard	guard@campass.com	$2b$10$tFFaLcCr80BAIGgspJFq1uT9wkmSIjx.f0fzL9wj9MOj2we1z.rU6	guard	\N	2026-01-14 18:36:38.989+00	2026-01-14 18:36:38.989+00	\N
+f60c9ec2-5506-4808-aa75-ffcee1d351c9	Demo Student	student@campass.com	$2b$10$iDeLg88dlt/QnFbqzgMC6u2I8JlqfexXKyopO3pfHQTANUUs6yCda	student	\N	2026-01-14 18:36:29.582+00	2026-01-18 20:43:21.718+00	d01a27dd-019c-4a14-8526-f76379807987
+629568df-5ddd-4fb9-ae38-02776281164c	Test Parent	parent@test.com	$2b$10$7/gdpvO8V/tOwtcCs49A4usgubKAr7teghuJkgX5mwYRcRUhA9vBq	parent	\N	2026-02-02 09:56:45.053+00	2026-02-02 09:56:45.053+00	\N
+0192b481-7136-4a31-b49b-d21ab27089fe	Test Warden	warden@test.com	$2b$10$bJqlzNk7BdSWfU4.aGYyveIaTK2Iy10dvu.RUYbduavCqPUFsutlu	warden	\N	2026-02-02 09:56:45.123+00	2026-02-02 09:56:45.123+00	\N
+2a38c1e3-41a7-4f1a-881b-ccb31e7fe173	Test Guard	guard@test.com	$2b$10$40LZeJh2vBgV.iilzGdbnOiaIQT8I.mtiDi/uyLJZULgqwhAzC3rq	guard	\N	2026-02-02 09:56:45.187+00	2026-02-02 09:56:45.187+00	\N
+5bb8a062-3bd7-4771-9585-991ded6e23c3	Test Student	student@test.com	$2b$10$czATZiDp5zy2ytr6T2VkA.CIxYBUqIsq9SuUMFXpATHQnxcpmpxU6	student	\N	2026-02-02 09:56:44.946+00	2026-02-02 10:45:46.947+00	629568df-5ddd-4fb9-ae38-02776281164c
+\.
+
+
+--
+-- Name: Settings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."Settings_id_seq"', 4, true);
+
+
+--
+-- Name: Locations Locations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Locations"
+    ADD CONSTRAINT "Locations_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Passes Passes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Passes"
+    ADD CONSTRAINT "Passes_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: SOs SOs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SOs"
+    ADD CONSTRAINT "SOs_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: SequelizeMeta SequelizeMeta_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SequelizeMeta"
+    ADD CONSTRAINT "SequelizeMeta_pkey" PRIMARY KEY (name);
+
+
+--
+-- Name: Settings Settings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Settings"
+    ADD CONSTRAINT "Settings_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Users Users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key1; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key1" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key10; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key10" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key11; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key11" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key12; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key12" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key13; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key13" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key14; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key14" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key15; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key15" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key16; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key16" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key17; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key17" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key18; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key18" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key19; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key19" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key2; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key2" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key20; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key20" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key21; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key21" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key22; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key22" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key23; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key23" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key24; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key24" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key25; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key25" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key26; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key26" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key27; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key27" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key28; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key28" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key29; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key29" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key3; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key3" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key30; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key30" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key31; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key31" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key32; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key32" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key33; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key33" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key34; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key34" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key35; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key35" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key36; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key36" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key37; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key37" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key38; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key38" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key39; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key39" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key4; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key4" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key40; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key40" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key41; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key41" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key42; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key42" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key43; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key43" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key44; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key44" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key45; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key45" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key46; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key46" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key47; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key47" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key48; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key48" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key49; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key49" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key5; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key5" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key50; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key50" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key51; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key51" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key52; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key52" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key53; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key53" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key54; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key54" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key55; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key55" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key56; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key56" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key57; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key57" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key58; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key58" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key59; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key59" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key6; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key6" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key60; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key60" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key61; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key61" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key62; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key62" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key63; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key63" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key64; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key64" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key65; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key65" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key66; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key66" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key67; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key67" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key68; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key68" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key69; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key69" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key7; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key7" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key70; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key70" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key71; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key71" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key72; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key72" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key73; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key73" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key74; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key74" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key75; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key75" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key76; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key76" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key77; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key77" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key8; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key8" UNIQUE (email);
+
+
+--
+-- Name: Users Users_email_key9; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key9" UNIQUE (email);
+
+
+--
+-- Name: Users Users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: passes_status; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX passes_status ON public."Passes" USING btree (status);
+
+
+--
+-- Name: passes_user_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX passes_user_id ON public."Passes" USING btree ("userId");
+
+
+--
+-- Name: users_email; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX users_email ON public."Users" USING btree (email);
+
+
+--
+-- Name: Locations Locations_studentId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Locations"
+    ADD CONSTRAINT "Locations_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES public."Users"(id) ON UPDATE CASCADE;
+
+
+--
+-- Name: Passes Passes_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Passes"
+    ADD CONSTRAINT "Passes_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE;
+
+
+--
+-- Name: SOs SOs_studentId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."SOs"
+    ADD CONSTRAINT "SOs_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES public."Users"(id) ON UPDATE CASCADE;
+
+
+--
+-- Name: Settings Settings_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Settings"
+    ADD CONSTRAINT "Settings_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE;
+
+
+--
+-- Name: Users Users_parentId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict ZjS9c2cMve2h22WWEM236zESEQft5X7FjdqiPnCa1Z8yU5dIPRYoiIfsedCyVeV
+
