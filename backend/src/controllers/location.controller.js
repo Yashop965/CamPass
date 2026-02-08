@@ -142,4 +142,42 @@ module.exports = {
       res.status(500).json({ message: "Server error" });
     }
   },
+
+  // Request an immediate location update from a student
+  async requestUpdate(req, res) {
+    try {
+      const { studentId } = req.body;
+      const requesterId = req.user.id;
+
+      if (!studentId) {
+        return res.status(400).json({ message: "studentId required" });
+      }
+
+      const student = await User.findByPk(studentId);
+      if (!student) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+
+      // Verify permission
+      if (req.user.role === 'parent' && student.parentId !== requesterId) {
+        return res.status(403).json({ message: "Unauthorized to track this student" });
+      }
+
+      const { sendToTopic } = require("../config/firebase");
+      const topic = `student_${studentId}_alerts`;
+
+      await sendToTopic(topic, {
+        title: "Location Request",
+        body: "Updating location...",
+      }, {
+        type: 'location_request',
+        requesterId: requesterId.toString()
+      });
+
+      return res.json({ message: "Location request sent" });
+    } catch (err) {
+      console.error("requestUpdate error", err);
+      return res.status(500).json({ message: "Failed to send request" });
+    }
+  },
 };

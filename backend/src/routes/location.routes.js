@@ -6,6 +6,9 @@ const { authenticateToken } = require("../middleware/auth.middleware");
 // Update student location (from student app - real-time)
 router.post("/update", authenticateToken, LocationController.updateLocation);
 
+// Request immediate update
+router.post("/request-update", authenticateToken, LocationController.requestUpdate);
+
 // Get student's current location (for parents/warden to track)
 router.get("/student/:studentId", authenticateToken, LocationController.getStudentLocation);
 

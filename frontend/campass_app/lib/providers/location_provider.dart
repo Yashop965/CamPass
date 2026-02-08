@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../services/location_service.dart';
+import '../core/constants/map_constants.dart';
 
 class LocationProvider extends ChangeNotifier {
   final LocationService _locationService = LocationService();
@@ -13,10 +14,9 @@ class LocationProvider extends ChangeNotifier {
   bool _isOutsideGeofence = false;
   Stream<Position>? _positionStream;
 
-  // Campus geofence parameters (example: center coordinates and radius in meters)
-  static const double campusLatitude = 28.5355; // Example: Delhi campus
-  static const double campusLongitude = 77.2707;
-  static const double geofenceRadiusMeters = 500; // 500 meters radius
+  Stream<Position>? _positionStream;
+
+  // Campus geofence parameters from MapConstants
 
   // Getters
   Position? get currentPosition => _currentPosition;
@@ -85,9 +85,9 @@ class LocationProvider extends ChangeNotifier {
     _isOutsideGeofence = !_locationService.isWithinGeofence(
       studentLat: _currentPosition!.latitude,
       studentLng: _currentPosition!.longitude,
-      campusLat: campusLatitude,
-      campusLng: campusLongitude,
-      radiusInMeters: geofenceRadiusMeters,
+      campusLat: MapConstants.campusLatitude,
+      campusLng: MapConstants.campusLongitude,
+      radiusInMeters: MapConstants.geofenceRadiusMeters,
     );
 
     notifyListeners();

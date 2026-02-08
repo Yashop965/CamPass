@@ -6,6 +6,7 @@ import '../../widgets/custom_error_dialog.dart';
 import 'package:provider/provider.dart';
 import '../../providers/location_provider.dart';
 import '../../utils/error_handler.dart';
+import '../../core/constants/map_constants.dart';
 
 class LocationTrackingScreen extends StatefulWidget {
   final String? userId;
@@ -132,15 +133,15 @@ class _LocationTrackingScreenState extends State<LocationTrackingScreen> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 12),
-                  const ListTile(
-                    title: Text("Campus Center"),
-                    subtitle: Text("Latitude: 28.5355\nLongitude: 77.2707"),
-                    leading: Icon(Icons.location_city),
+                  ListTile(
+                    title: const Text("Campus Center"),
+                    subtitle: Text("Latitude: ${MapConstants.campusLatitude}\nLongitude: ${MapConstants.campusLongitude}"),
+                    leading: const Icon(Icons.location_city),
                   ),
-                  const ListTile(
-                    title: Text("Geofence Radius"),
-                    subtitle: Text("500 meters"),
-                    leading: Icon(Icons.rounded_corner),
+                  ListTile(
+                    title: const Text("Geofence Radius"),
+                    subtitle: Text("${MapConstants.geofenceRadiusMeters} meters"),
+                    leading: const Icon(Icons.rounded_corner),
                   ),
                   const SizedBox(height: 24),
 

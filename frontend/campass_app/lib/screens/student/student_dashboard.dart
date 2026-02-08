@@ -13,6 +13,11 @@ import 'package:provider/provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../services/firebase_service.dart';
 import '../../providers/pass_provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../core/config/app_config.dart';
+import '../../core/constants/map_constants.dart';
 
 class StudentDashboard extends StatefulWidget {
   final String? userId;
@@ -74,6 +79,10 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
                   if (_token != null && _userId != null) {
                     Provider.of<PassProvider>(context, listen: false).loadPasses(_userId!, _token!);
                  }
+              } else if (type == 'location_request') {
+                 _handleLocationRequest();
+                 msg = "Sending location to parent...";
+                 color = AppTheme.primary;
               }
 
               if (msg.isNotEmpty) {
@@ -96,6 +105,42 @@ class _StudentDashboardState extends State<StudentDashboard> with SingleTickerPr
   void dispose() {
     _pulseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLocationRequest() async {
+      try {
+         // Check permissions or assume granted if using app
+         final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+         
+         final distanceInMeters = Geolocator.distanceBetween(
+             position.latitude,
+             position.longitude,
+             MapConstants.campusLatitude,
+             MapConstants.campusLongitude
+         );
+         final isGeofenceViolation = distanceInMeters > MapConstants.geofenceRadiusMeters;
+
+         final token = await SessionManager.getToken();
+         final user = await SessionManager.getUser();
+         
+         if (token != null && user != null) {
+             final url = Uri.parse('${AppConfig.baseUrl}/api/location/update');
+             await http.post(
+                url, 
+                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+                body: jsonEncode({
+                   'studentId': user.id,
+                   'latitude': position.latitude,
+                   'longitude': position.longitude,
+                   'accuracy': position.accuracy,
+                   'isGeofenceViolation': isGeofenceViolation
+                })
+             );
+             print("Location sent to parent (Foreground)");
+         }
+      } catch (e) {
+         print("Error sending location in foreground: $e");
+      }
   }
 
   Future<void> _loadData() async {
