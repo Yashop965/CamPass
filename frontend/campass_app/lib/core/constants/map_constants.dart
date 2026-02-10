@@ -7,5 +7,5 @@ class MapConstants {
   
   static const double geofenceRadiusMeters = 500.0;
 
-  static LatLng get campusLocation => LatLng(campusLatitude, campusLongitude);
+  static LatLng get campusLocation => const LatLng(campusLatitude, campusLongitude);
 }

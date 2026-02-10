@@ -12,7 +12,7 @@ class WardenProvider extends ChangeNotifier {
   List<PassModel> _passHistory = [];
   List<dynamic> _allSOSAlerts = [];
   List<dynamic> _geofenceViolations = [];
-  List<dynamic> _lateEntryAlerts = [];
+  final List<dynamic> _lateEntryAlerts = [];
   List<dynamic> _allStudentLocations = [];
   bool _isLoading = false;
   String? _errorMessage;

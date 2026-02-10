@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import '../../providers/sos_provider.dart';
 import '../../services/session_manager.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/theme/app_theme.dart';
-import '../../widgets/custom_error_dialog.dart';
 
 class SOSScreen extends StatefulWidget {
   final String? userId;

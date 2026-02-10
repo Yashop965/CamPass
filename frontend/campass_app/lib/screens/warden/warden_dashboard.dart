@@ -520,7 +520,7 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("ACTIVE ALERTS", style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                  const Text("ACTIVE ALERTS", style: TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
                   TextButton.icon(
                     onPressed: () {
                       if (_token != null) {
@@ -655,11 +655,11 @@ class _WardenDashboardState extends State<WardenDashboard> with WidgetsBindingOb
                 ),
               ] else ...[
                 const SizedBox(height: 8),
-                Row(
+                const Row(
                   children: [
-                    const Icon(Icons.block, color: AppTheme.error, size: 16),
-                    const SizedBox(width: 8),
-                    const Text("No Active Pass", style: TextStyle(color: AppTheme.error, fontSize: 13, fontWeight: FontWeight.w600)),
+                    Icon(Icons.block, color: AppTheme.error, size: 16),
+                    SizedBox(width: 8),
+                    Text("No Active Pass", style: TextStyle(color: AppTheme.error, fontSize: 13, fontWeight: FontWeight.w600)),
                   ],
                 ),
               ],

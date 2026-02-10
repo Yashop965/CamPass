@@ -290,10 +290,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.pushNamed(context, '/register');
                            },
                            child: RichText(
-                              text: TextSpan(
+                              text: const TextSpan(
                                  text: "Don't have an account? ",
-                                 style: const TextStyle(color: Colors.white70),
-                                 children: const [
+                                 style: TextStyle(color: Colors.white70),
+                                 children: [
                                     TextSpan(
                                        text: "Register",
                                        style: TextStyle(

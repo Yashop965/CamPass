@@ -171,11 +171,11 @@ class _BarcodeDisplayScreenState extends State<BarcodeDisplayScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
-                        gradient: _getStatusGradient(pass.status ?? 'pending'),
+                        gradient: _getStatusGradient(pass.status),
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
                     ),
                     child: Text(
-                       (pass.type ?? 'OUTING').toUpperCase(),
+                       (pass.type).toUpperCase(),
                        textAlign: TextAlign.center,
                        style: const TextStyle(
                           color: Colors.white,
@@ -219,14 +219,14 @@ class _BarcodeDisplayScreenState extends State<BarcodeDisplayScreen> {
                           Container(
                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                              decoration: BoxDecoration(
-                                color: _getStatusColor(pass.status ?? 'pending').withOpacity(0.2),
+                                color: _getStatusColor(pass.status).withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: _getStatusColor(pass.status ?? 'pending')),
+                                border: Border.all(color: _getStatusColor(pass.status)),
                              ),
                              child: Text(
-                                (pass.status ?? 'PENDING').toUpperCase(),
+                                (pass.status).toUpperCase(),
                                 style: TextStyle(
-                                   color: _getStatusColor(pass.status ?? 'pending'),
+                                   color: _getStatusColor(pass.status),
                                    fontWeight: FontWeight.bold,
                                    letterSpacing: 2
                                 ),

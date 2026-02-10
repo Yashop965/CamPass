@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../services/session_manager.dart';
-import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_colors.dart';
 import 'dart:ui';
 
@@ -166,7 +165,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                                           children: [
                                             Text(
                                               role['name'],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.white,
@@ -184,7 +183,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                                         ),
                                       ),
                                       if (isSelected)
-                                        Icon(
+                                        const Icon(
                                           Icons.check_circle,
                                           color: AppColors.systemGreen,
                                           size: 28,

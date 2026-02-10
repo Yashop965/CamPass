@@ -157,7 +157,7 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
                                 colors: [AppTheme.primary, AppTheme.accent],
@@ -205,7 +205,7 @@ class _GuardProfileScreenState extends State<GuardProfileScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
+                              gradient: const LinearGradient(
                                 colors: [AppTheme.primary, AppTheme.accent],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,

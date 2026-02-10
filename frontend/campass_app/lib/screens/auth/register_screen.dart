@@ -346,10 +346,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: TextButton(
                              onPressed: () => Navigator.pop(context),
                              child: RichText(
-                                text: TextSpan(
+                                text: const TextSpan(
                                    text: "Already have an account? ",
-                                   style: const TextStyle(color: Colors.white70),
-                                   children: const [
+                                   style: TextStyle(color: Colors.white70),
+                                   children: [
                                       TextSpan(
                                          text: "Login",
                                          style: TextStyle(

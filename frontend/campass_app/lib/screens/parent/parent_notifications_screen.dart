@@ -23,8 +23,6 @@ class ParentNotificationsScreen extends StatefulWidget {
 }
 
 class _ParentNotificationsScreenState extends State<ParentNotificationsScreen> {
-  final bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();

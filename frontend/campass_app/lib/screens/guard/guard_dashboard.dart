@@ -7,7 +7,6 @@ import '../../core/theme/app_theme.dart';
 import '../../widgets/gradient_background.dart';
 import '../../widgets/glassy_card.dart';
 import '../../providers/guard_provider.dart';
-import '../../services/session_manager.dart';
 import 'barcode_scanner_screen.dart';
 import 'guard_profile_screen.dart';
 
@@ -33,13 +32,6 @@ class _GuardDashboardState extends State<GuardDashboard> {
           Provider.of<GuardProvider>(context, listen: false);
       guardProvider.loadScanHistory(widget.token);
     });
-  }
-
-  Future<void> _logout() async {
-    await SessionManager.logout();
-    if (mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-    }
   }
 
   @override
@@ -82,10 +74,10 @@ class _GuardDashboardState extends State<GuardDashboard> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Last Scanned Pass',
                                   style: TextStyle(
                                     fontSize: 16,

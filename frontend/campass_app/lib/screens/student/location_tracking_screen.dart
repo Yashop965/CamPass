@@ -133,15 +133,15 @@ class _LocationTrackingScreenState extends State<LocationTrackingScreen> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 12),
-                  ListTile(
-                    title: const Text("Campus Center"),
+                  const ListTile(
+                    title: Text("Campus Center"),
                     subtitle: Text("Latitude: ${MapConstants.campusLatitude}\nLongitude: ${MapConstants.campusLongitude}"),
-                    leading: const Icon(Icons.location_city),
+                    leading: Icon(Icons.location_city),
                   ),
-                  ListTile(
-                    title: const Text("Geofence Radius"),
+                  const ListTile(
+                    title: Text("Geofence Radius"),
                     subtitle: Text("${MapConstants.geofenceRadiusMeters} meters"),
-                    leading: const Icon(Icons.rounded_corner),
+                    leading: Icon(Icons.rounded_corner),
                   ),
                   const SizedBox(height: 24),
 

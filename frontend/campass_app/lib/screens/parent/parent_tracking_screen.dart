@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -173,7 +172,7 @@ class _ParentTrackingScreenState extends State<ParentTrackingScreen> with Ticker
                        color: AppTheme.surface.withOpacity(0.8),
                        shape: BoxShape.circle,
                        border: Border.all(color: Colors.white24),
-                       boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 8)]
+                       boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8)]
                      ),
                      child: Transform.rotate(
                        angle: (rotation * (math.pi / 180)) * -1,
@@ -300,7 +299,7 @@ class _ParentTrackingScreenState extends State<ParentTrackingScreen> with Ticker
                Container(
                   width: 44, height: 44,
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                      color: Colors.white,
                      shape: BoxShape.circle,
                      boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)]
