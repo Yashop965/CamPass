@@ -1,13 +1,13 @@
 // lib/routes/app_routes.dart
 import 'package:flutter/material.dart';
-import '../screens/auth/login_screen.dart';
+import '../screens/login_screen.dart';
 import '../screens/auth/role_select_screen.dart';
 import '../screens/auth/register_screen.dart';
-import '../screens/student/student_dashboard.dart';
-import '../screens/parent/parent_dashboard.dart';
-import '../screens/warden/warden_dashboard.dart';
-import '../screens/guard/guard_dashboard.dart';
-import '../screens/admin/admin_dashboard.dart';
+import '../screens/student_dashboard_screen.dart';
+import '../screens/parent_dashboard_screen.dart';
+import '../screens/warden_dashboard_screen.dart';
+import '../screens/guard_dashboard_screen.dart';
+import '../screens/admin_dashboard_screen.dart';
 import '../screens/student/student_profile_screen.dart';
 import '../screens/student/student_settings_screen.dart';
 import '../screens/parent/parent_profile_screen.dart';
@@ -22,38 +22,11 @@ class AppRoutes {
     '/': (context) => const RoleSelectScreen(),
     '/login': (context) => const LoginScreen(),
     '/register': (context) => const RegisterScreen(),
-    '/student': (context) {
-      final args = ModalRoute.of(context)?.settings.arguments;
-      String? userId;
-      if (args is Map && args['userId'] is String) {
-        userId = args['userId'] as String;
-      }
-      return StudentDashboard(userId: userId);
-    },
-    '/parent': (context) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      final parentId = args?['parentId'] as String? ?? '';
-      final token = args?['token'] as String? ?? '';
-      return ParentDashboard(parentId: parentId, token: token);
-    },
-    '/warden': (context) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      final wardenId = args?['wardenId'] as String? ?? '';
-      final token = args?['token'] as String? ?? '';
-      return WardenDashboard(wardenId: wardenId, token: token);
-    },
-    '/guard': (context) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      final guardId = args?['guardId'] as String? ?? '';
-      final token = args?['token'] as String? ?? '';
-      return GuardDashboard(guardId: guardId, token: token);
-    },
-    '/admin': (context) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      final adminId = args?['adminId'] as String? ?? '';
-      final token = args?['token'] as String? ?? '';
-      return AdminDashboard(adminId: adminId, token: token);
-    },
+    '/student': (context) => const StudentDashboardScreen(),
+    '/parent': (context) => const ParentDashboardScreen(),
+    '/warden': (context) => const WardenDashboardScreen(),
+    '/guard': (context) => const GuardDashboardScreen(),
+    '/admin': (context) => const AdminDashboardScreen(),
     // Student routes
     '/student/profile': (context) {
       final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
